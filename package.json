@@ -1,0 +1,23 @@
+{
+  "name": "gatehouse",
+  "version": "1.0.0",
+  "description": "Authentication Monitor",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "monitoring",
+    "management",
+    "telemetry"
+  ],
+  "author": "Simon Janes",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
