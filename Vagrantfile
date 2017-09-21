@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "generic/debian9" 
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = "4096"
+    libvirt.cpus = 3
   end
   config.vm.synced_folder './', '/vagrant', type: 'rsync'
   # Disable automatic box update checking. If you disable this, then
@@ -69,9 +70,9 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y gcc libssl-dev zlib1g-dev scons 
+     apt-get install -y gcc libssl-dev zlib1g-dev scons libboost1.62-all-dev
      # Node already unpacked prior to rsync.
-     cd /vagrant/vendor/node-v6.11.3 && ./configure && make && make install && make clean 
-     cd /vagrant/vendor/mongodb-src-r3.4.9 && scons all && scons --prefix=/opt/mongo install
+     cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
+     cd /vagrant/vendor/mongodb-src-r3.4.9 && scons -j8 core --use-system-boost && scons --prefix=/opt/mongo install
   SHELL
 end
