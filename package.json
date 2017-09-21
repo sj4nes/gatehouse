@@ -19,6 +19,7 @@
   "dependencies": {
     "muicss": "^0.9.25",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "underscore": "^1.8.3"
   }
 }
