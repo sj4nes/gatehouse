@@ -272,9 +272,15 @@ bool String::substrMatch(const std::string& str,
     auto haystack = caseFoldAndStripDiacritics(&haystackBuf, str, options, cfMode);
     auto needle = caseFoldAndStripDiacritics(&needleBuf, find, options, cfMode);
 
-    // Case sensitive and diacritic sensitive.
+// Case sensitive and diacritic sensitive.
+#if BOOST_VERSION < 106200
     return boost::algorithm::boyer_moore_search(
                haystack.begin(), haystack.end(), needle.begin(), needle.end()) != haystack.end();
+#else
+    return boost::algorithm::boyer_moore_search(
+               haystack.begin(), haystack.end(), needle.begin(), needle.end()) !=
+        std::make_pair(haystack.end(), haystack.end());
+#endif
 }
 
 }  // namespace unicode
