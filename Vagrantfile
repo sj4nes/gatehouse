@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = "4096"
   end
+  config.vm.synced_folder './', '/vagrant', type: 'rsync'
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -68,8 +69,9 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y clang libssl-dev zlib1g-dev
-     cd vendor && tar xzvf node-v6.11.3.tar.gz && cd node-v6.11.3 && CC=clang ./configure && make && make install && make clean
-     # apt-get install -y node mongodb-org npm
+     apt-get install -y gcc libssl-dev zlib1g-dev scons 
+     # Node already unpacked prior to rsync.
+     cd /vagrant/vendor/node-v6.11.3 && ./configure && make && make install && make clean 
+     cd /vagrant/vendor/mongodb-src-r3.4.9 && scons all && scons --prefix=/opt/mongo install
   SHELL
 end
