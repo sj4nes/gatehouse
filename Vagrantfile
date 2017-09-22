@@ -70,9 +70,13 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y gcc libssl-dev zlib1g-dev scons libboost1.62-all-dev
+     time apt-get install -y gcc libssl-dev zlib1g-dev scons libboost1.62-all-dev
      # Node already unpacked prior to rsync.
-     cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
-     cd /vagrant/vendor/mongodb-src-r3.4.9 && scons -j8 core --use-system-boost && scons --prefix=/opt/mongo install
+     time cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
+     time cd /vagrant/vendor/mongodb-src-r3.4.9 &&  scons -j8 --prefix=/opt/mongo --use-system-boost  install
+     mkdir -p /data/db && chown vagrant /data/db
+     sudo -u vagrant '/vagrant/start-mongod.sh'
+     cd /vagrant/
+     npm start
   SHELL
 end
