@@ -24,13 +24,14 @@
     "@types/lodash": "^4.14.74",
     "@types/mongodb": "^2.2.11",
     "@types/node": "^8.0.29",
+    "@types/serve-static": "^1.7.32",
     "bcryptjs": "^2.4.3",
     "express": "^4.15.4",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
     "muicss": "^0.9.25",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1" 
   },
   "devDependencies": {
     "typescript": "^2.5.2"

@@ -6,8 +6,7 @@ import * as bcryptjs from "bcryptjs";
 import * as mongodb from "mongodb";
 
 // Configuration
-let gatehousePort = 3000;
-let publicPath = path.resolve(__dirname, "public");
+let gatehousePort = 3000; 
 let mongoDatabase = "mongodb://localhost:27017/gatehouse";
 
 let express = require('express');
@@ -177,4 +176,5 @@ function registerUser(username: string, password: string) {
     });
 }
 
+gatehouse.use(express.static('public'));
 http.createServer(gatehouse).listen(gatehousePort);
