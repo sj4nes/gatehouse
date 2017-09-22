@@ -28,6 +28,54 @@ interface AuthEvent {
     user_agent: string;
     result: string;
 }
+function randomTimeStamp(): string {
+    let ts = Math.floor(Math.random() * 1e8 * 1000);
+    return new Date(ts).toUTCString();
+}
+function randomIP(): string {
+    // These are of course utter-nonsense.
+    let a = Math.floor(Math.random() * (255 - 1) + 1);
+    let b = Math.floor(Math.random() * (255 - 1) + 1);
+    let c = Math.floor(Math.random() * (255 - 1) + 1);
+    let d = Math.floor(Math.random() * (255 - 1) + 1);
+    return ":ffff:" + [a, b, c, d].join('.');
+}
+
+function randomUsername(): string {
+    return Math.floor((Math.random() * 1e8)).toString(35);
+}
+
+function randomUserAgent(): string {
+    return "Internet Exploder 5.5";
+}
+
+function randomResult(): string {
+    let observation = Math.random();
+    if (observation < 0.01) {
+        return "failed";
+    }
+    if (observation < 0.40) {
+        return "logged-out";
+    }
+    return "logged-in";
+}
+
+function generateAuthEvent(): AuthEvent {
+    let ae: AuthEvent =
+        {
+            timestamp: randomTimeStamp(),
+            ip_address: randomIP(),
+            username: randomUsername(),
+            user_agent: randomUserAgent(),
+            result: randomResult()
+        };
+    return ae;
+}
+
+function recordAuthEvent(ae: AuthEvent) {
+    let log = MDB.collection('auth_events');
+    log.insertOne(ae);
+}
 
 interface ExRoute {
     method: HttpMethod;
@@ -44,9 +92,12 @@ let gatehouseRoutes: Array<ExRoute> = [
     , { method: "post", path: "/api/1/record", handler: postRecordR }
 ];
 
-function getCreateTestDataR(request, response) { 
+function getCreateTestDataR(request, response) {
     registerUser("admin", "swordfish");
     registerUser("baduser", "password");
+    for (var i = 0; i < 1e5; i++) {
+        recordAuthEvent(generateAuthEvent());
+    }
     response.end("Test data created.");
 }
 
@@ -125,4 +176,5 @@ function registerUser(username: string, password: string) {
         salt: salt
     });
 }
+
 http.createServer(gatehouse).listen(gatehousePort);
