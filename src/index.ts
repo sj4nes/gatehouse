@@ -25,7 +25,7 @@ interface AuthEvent {
     timestamp: string;
     ip_address: string;
     username: string;
-    user_agent: string; 
+    user_agent: string;
     result: string;
 }
 
@@ -39,9 +39,16 @@ let gatehouseRoutes: Array<ExRoute> = [
     { method: "get", path: "/", handler: getFrontR }
     , { method: "get", path: "/acct/register", handler: getRegisterR }
     , { method: "post", path: "/acct/register", handler: postRegisterR }
+    , { method: "get", path: "/acct/test", handler: getCreateTestDataR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
 ];
+
+function getCreateTestDataR(request, response) { 
+    registerUser("admin", "swordfish");
+    registerUser("baduser", "password");
+    response.end("Test data created.");
+}
 
 function getFrontR(request, response): void {
     response.end("TBD (front).");
@@ -62,10 +69,12 @@ function postLoginR(request, response): void {
     response.end("TBD (login).");
 }
 function log_error(str: string): void {
-    process.stderr.write(str);
+    let ts = new Date().toString();
+    process.stderr.write("\n" + [ts, str].join(':'));
 }
 
 function registerRoute(r: ExRoute) {
+    log_error("Path: " + [r.method, r.path].join(' '))
     switch (r.method) {
         case "get": gatehouse.get(r.path, r.handler); break;
         case "put": gatehouse.put(r.path, r.handler); break;
@@ -80,6 +89,7 @@ function registerRoute(r: ExRoute) {
 let MDB = null;
 mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
 function mclientHandler(err, db) {
+    console.log(arguments);
     if (err !== null) {
         log_error("Mongo connection error: " + err);
         // This is not production, will not reconnect in future.
@@ -87,14 +97,32 @@ function mclientHandler(err, db) {
     }
     MDB = db;
 }
+gatehouse.use(serverLogger);
+function serverLogger(request, response, next) {
+    log_error([request.method, request.url, request.ip].join(" "));
+    next();
+}
 _.each(gatehouseRoutes, registerRoute);
 
 process.on('SIGINT', function () {
     log_error("SIGINT: Caught.");
-    if (MDB!==null) { 
+    if (MDB !== null) {
+        log_error("Closing database connection.");
         MDB.close();
     }
     process.exit();
 });
+log_error("Starting Gatehouse");
+log_error("Listening on " + gatehousePort);
 
+function registerUser(username: string, password: string) {
+    let salt = bcryptjs.genSaltSync();
+    let hashed = bcryptjs.hashSync(password, salt);
+    let users = MDB.collection('users');
+    users.insertOne({
+        username: username,
+        passhash: hashed,
+        salt: salt
+    });
+}
 http.createServer(gatehouse).listen(gatehousePort);
