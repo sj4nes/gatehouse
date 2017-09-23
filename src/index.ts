@@ -33,6 +33,7 @@ gatehouse.use(flash());
 gatehouse.use(csurf());
 
 type HttpMethod = "get" | "put" | "post" | "delete" | "*";
+type AuthResult = "auth-pass" | "auth-fail" | "auth-unknown" | "auth-error" | "auth-end";
 
 interface GatehouseUser {
     username: string;
@@ -45,7 +46,7 @@ interface AuthEvent {
     ip_address: string;
     username: string;
     user_agent: string;
-    result: string;
+    result: AuthResult;
 }
 function randrange(start: number, end: number): number {
     // This is really not intended to be precise.
@@ -77,15 +78,21 @@ function randomUserAgent(): string {
     return "Internet Exploder 5.5";
 }
 
-function randomResult(): string {
+function randomResult(): AuthResult {
     let observation = Math.random();
-    if (observation < 0.01) {
-        return "failed";
+    if (observation < 0.005) {
+        return "auth-error";
+    }
+    if (observation < 0.015) {
+        return "auth-unknown";
+    }
+    if (observation < 0.02) {
+        return "auth-fail";
     }
     if (observation < 0.40) {
-        return "logged-out";
+        return "auth-end";
     }
-    return "logged-in";
+    return "auth-pass";
 }
 
 function generateAuthEvent(): AuthEvent {
@@ -325,7 +332,7 @@ function verifyUser(ip: string, user_agent: string, username: string, password: 
                 ip_address: ip,
                 username: username,
                 user_agent: user_agent,
-                result: "error"
+                result: "auth-error"
             };
             recordAuthEvent(ae);
             cb(err, null);
@@ -337,7 +344,7 @@ function verifyUser(ip: string, user_agent: string, username: string, password: 
                 ip_address: ip,
                 username: username,
                 user_agent: user_agent,
-                result: "unknown-user"
+                result: "auth-unknown"
             };
             recordAuthEvent(ae);            
             cb(null, false);
