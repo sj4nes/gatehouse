@@ -21,8 +21,26 @@ html
                 .mui-col-sm-3
                     h1 
                         a.mui--color-black(href="/") gate<b>house</b>
-                .mui-col-sm-8
+                .mui-col-sm-4
                     h1= title
+                .mui-col-sm-2.mui--color-black
+                    if username 
+                        span Logged in as ${username}
+                    else
+                        span Not logged in.
     #screen
         .mui-container
+            if messages && messages.length > 0
+                .mui-panel.mui--bg-color-green-100
+                    h4 Notices
+                    while message = messages.shift()
+                        p
+                            em= message
+            if errors && errors.length > 0
+                .mui-panel.mui--bg-color-red-100
+                    h4 Errors
+                    while error = errors.shift()
+                        p
+                            b= error
+
             block content

@@ -9,7 +9,7 @@ import * as cookieParser from "cookie-parser";
 import * as bodyParser from "body-parser";
 import * as session from "express-session";
 import * as morgan from "morgan";
-let flash = require('connect-flash');
+var flash = require('connect-flash');
 
 // Configuration
 let gatehousePort = 3000;
@@ -53,12 +53,12 @@ function randrange(start: number, end: number): number {
     return Math.floor(Math.random() * (end - start)) + start;
 }
 function randomTimeStamp(): string {
-    let year = randrange(1971,2017);
-    let month = randrange(1,12);
-    let day = randrange(1,28); // Goodness, we don't believe in anything other than February.
-    let hour = randrange(1,23);
-    let minute = randrange(1,59);
-    let sec = randrange(1,59);
+    let year = randrange(1971, 2017);
+    let month = randrange(1, 12);
+    let day = randrange(1, 28); // Goodness, we don't believe in anything other than February.
+    let hour = randrange(1, 23);
+    let minute = randrange(1, 59);
+    let sec = randrange(1, 59);
     return new Date(year, month, day, hour, minute, sec).toUTCString();
 }
 function randomIP(): string {
@@ -124,10 +124,12 @@ let gatehouseRoutes: Array<ExRoute> = [
     , { method: "post", path: "/acct/register", handler: postRegisterR }
     , { method: "get", path: "/acct/test", handler: getCreateTestDataR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
+    , { method: "get", path: "/acct/login", handler: getFrontR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
+    , { method: "get", path: "/acct/dashboard", handler: getDashboardR }
 ];
 
-function getCreateTestDataR(request, response) { 
+function getCreateTestDataR(request, response) {
     for (var i = 0; i < 50; i++) {
         recordAuthEvent(generateAuthEvent());
     }
@@ -136,13 +138,29 @@ function getCreateTestDataR(request, response) {
 
 function getFrontR(request, response): void {
     response.render('index', {
+        messages: request.flash('info'),
+        errors: request.flash('error'),
         title: "",
         csrfToken: request.csrfToken()
     });
 }
 
+
+
+function getDashboardR(request, response): void {
+    response.render('acct/dashboard', {
+        messages: request.flash('info'),
+        errors: request.flash('error'),
+        title: "Dashboard",
+        csrfToken: request.csrfToken()
+    });
+}
+
+
 function getRegisterR(request, response): void {
     response.render('acct/register', {
+        messages: request.flash('info'),
+        errors: request.flash('error'),
         title: "Account Registration",
         csrfToken: request.csrfToken()
     });
@@ -156,22 +174,17 @@ function postRegisterR(request, response): void {
 
     // cases: 
     //    mismatched passwords
-    //    pre-existing user 
-
+    //    pre-existing user  
     if (pw !== pwc) {
-        response.render('acct/register', {
-            title: "Account Registration",
-            error: "Password and password confirmation do not match."
-        });
+        request.flash("error", "Password and password confirmation do not match.");
+        response.redirect('/acct/register');
         return;
     }
     // Utilities and behaviors
 
     function genericDatabaseError() {
-        response.render('acct/register', {
-            title: "Account Registration",
-            error: "Database error returned."
-        });
+        request.flash("error", "Database error returned.");
+        response.redirect('/acct/register');
         return;
     }
 
@@ -181,10 +194,8 @@ function postRegisterR(request, response): void {
             return;
         }
         if (exists) {
-            response.render('acct/register', {
-                title: "Account Registration",
-                error: "Username already exists."
-            });
+            request.flash("error", "Username already exists.");
+            response.redirect('/acct/register');
             return;
         }
         createUser();
@@ -200,13 +211,12 @@ function postRegisterR(request, response): void {
             return;
         }
         if (created) {
-            response.render("acct/login", { title: "Account Login", message: "Account created, please log-in." });
+            request.flash("info", "Account created, please login.");
+            response.redirect('/acct/login');
             return;
         }
-        response.render("acct/register", {
-            title: "Account Registration",
-            error: "Unknown error creating account."
-        });
+        request.flash("error", "Unknown error creating account.");
+        response.redirect("/acct/register");
         return;
     }
 
@@ -235,23 +245,20 @@ function postRecordR(request, response): void {
 function postLoginR(request, response): void {
     let un = request.body['username'];
     let pw = request.body['password'];
-    
+
     verifyUser(request.ip, request.user_agent, un, pw, eitherErrorVerified);
     function eitherErrorVerified(err, verified) {
         if (err) {
-            response.render("acct/login", {
-                title: "Account Login",
-                error: "There was an error accessing the account."
-            });
+            request.flash("error", "There was an error accessing the account.");
+            response.redirect("/acct/login");
             return;
         }
         if (!err && !verified) {
-            response.render("acct/login", {
-                title: "Account Login",
-                error: "Access denied."
-            });
+            request.flash("error", "Access denied.");
+            response.redirect("/acct/login");
             return;
         }
+        request.flash("info", "Access permitted.");
         response.redirect("/acct/dashboard");
     }
 }
@@ -346,7 +353,7 @@ function verifyUser(ip: string, user_agent: string, username: string, password: 
                 user_agent: user_agent,
                 result: "auth-unknown"
             };
-            recordAuthEvent(ae);            
+            recordAuthEvent(ae);
             cb(null, false);
             return;
         }
@@ -359,7 +366,7 @@ function verifyUser(ip: string, user_agent: string, username: string, password: 
                 user_agent: user_agent,
                 result: "auth-pass"
             };
-            recordAuthEvent(ae);              
+            recordAuthEvent(ae);
             cb(null, true);
             return;
         }
@@ -370,7 +377,7 @@ function verifyUser(ip: string, user_agent: string, username: string, password: 
             user_agent: user_agent,
             result: "auth-fail"
         };
-        recordAuthEvent(ae);         
+        recordAuthEvent(ae);
         cb(null, false);
     }
 }
