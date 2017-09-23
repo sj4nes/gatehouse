@@ -136,7 +136,7 @@ function getCreateTestDataR(request, response) {
 
 function getFrontR(request, response): void {
     response.render('index', {
-        title: "Ready the gates!",
+        title: "",
         csrfToken: request.csrfToken()
     });
 }
