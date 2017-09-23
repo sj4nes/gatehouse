@@ -121,7 +121,7 @@ let gatehouseRoutes: Array<ExRoute> = [
 ];
 
 function getCreateTestDataR(request, response) { 
-    for (var i = 0; i < 1e5; i++) {
+    for (var i = 0; i < 50; i++) {
         recordAuthEvent(generateAuthEvent());
     }
     response.redirect("/");
