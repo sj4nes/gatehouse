@@ -1,0 +1,24 @@
+extends ../layout/default.pug
+block content
+  if error 
+    .mui-panel.mui--bg-color-red-100
+        h3 Error
+        p= error
+  if message
+    .mui-panel.mui--bg-color-blue-100
+        h3 Notice
+        p= message
+  form.mui-form(method="POST" action="/acct/register")
+    include ../csrf.pug
+    legend Create a new user account
+    div.mui-textfield
+        label(for="username") Username:
+        input(name="username" size=32 placeholder="YOUR NAME HERE")
+    div.mui-textfield
+        label(for="password") Password:
+        input(name="password" type="password" size=32 placeholder="TYPE YOUR SECRET")
+    div.mui-textfield
+        label(for="confirm") Confirm:
+        input(name="confirm" type="password" size=32 placeholder="RE-TYPE YOUR SECRET")
+    button.mui-btn.mui-btn--primary(type="submit") Register
+    button.mui-btn.mui-btn--raised(type="button" onclick="document.location='/';") Cancel

@@ -1,0 +1,12 @@
+/* gatehouse.css */
+h1 a:hover { 
+    text-decoration: none; 
+    padding-bottom: 0.35rem; 
+    border-bottom: 0.25rem dashed red; 
+}
+p.legal-warning {   
+    border: 0.15rem ridge red; 
+    color: black;
+    font-weight: bold;
+    padding: 1rem; 
+}

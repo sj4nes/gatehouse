@@ -4,13 +4,33 @@ import * as _ from "lodash";
 import * as path from "path";
 import * as bcryptjs from "bcryptjs";
 import * as mongodb from "mongodb";
+import * as csurf from "csurf"; 
+import * as cookieParser from "cookie-parser";
+import * as bodyParser from "body-parser"; 
+import * as session from "express-session";
+import * as morgan from "morgan";
+let flash = require('connect-flash');
 
 // Configuration
-let gatehousePort = 3000; 
+let gatehousePort = 3000;
 let mongoDatabase = "mongodb://localhost:27017/gatehouse";
+
+log(`Initializing Gatehouse on :${gatehousePort}`);
 
 let express = require('express');
 let gatehouse = express();
+gatehouse.set('view engine', 'pug');
+gatehouse.set('views', './views');
+gatehouse.use(morgan('common'));
+gatehouse.use(bodyParser.urlencoded({extended: false}));
+gatehouse.use(cookieParser());
+gatehouse.use(session({
+    secret: "fidelio-alskfwenr2234oin234o32in4o23i4o3r",
+    resave: true,
+    saveUninitialized: true
+}));
+gatehouse.use(flash());
+gatehouse.use(csurf());
 
 type HttpMethod = "get" | "put" | "post" | "delete" | "*";
 
@@ -101,30 +121,115 @@ function getCreateTestDataR(request, response) {
 }
 
 function getFrontR(request, response): void {
-    response.end("TBD (front).");
+    response.render('index', {
+        title: "Ready the gates!",
+        csrfToken: request.csrfToken()
+    });
 }
 
 function getRegisterR(request, response): void {
-    response.end("TBD (registration).");
+    response.render('acct/register', {
+        title: "Account Registration",
+        csrfToken: request.csrfToken()
+    });
 }
 
 function postRegisterR(request, response): void {
-    response.end("TBD (registration).");
+    // Unpack form parameters.
+    let un = request.body['username'];
+    let pw = request.body['password'];
+    let pwc = request.body['confirm']; 
+
+    // cases: 
+    //    mismatched passwords
+    //    pre-existing user 
+
+    if (pw !== pwc) {
+        response.render('acct/register', {
+            title: "Account Registration",
+            error: "Password and password confirmation do not match."
+        });
+        return;
+    }
+    // Utilities and behaviors
+
+    function genericDatabaseError() {
+        response.render('acct/register', {
+            title: "Account Registration",
+            error: "Database error returned."
+        });
+        return;  
+    }
+
+    function maybeExists(err, exists) {
+        if (err) {
+            genericDatabaseError();
+            return;
+        }
+        if (exists) {
+            response.render('acct/register', {
+                title: "Account Registration",
+                error: "Username already exists."
+            });
+            return;    
+        }
+        createUser();
+    }
+    
+    function createUser() {
+        registerUser(un, pw, maybeCreated);
+    }
+
+    function maybeCreated(err, created) {
+        if (err) {
+            genericDatabaseError();
+            return;
+        }
+        if (created) {
+            response.render("acct/login", { title: "Account Login", message: "Account created, please log-in." });
+            return;
+        }
+        response.render("acct/register", { 
+            title: "Account Registration", 
+            error: "Unknown error creating account." 
+        });
+        return;
+    }
+
+    // Registration processing begins here:
+    userExists(un, maybeExists);
+}
+
+function userExists(un: string, cb: Function) {
+    getUser(un, (err, user) => {
+        if (err) {
+            cb(err, true); // Don't allow registration if there was an error.
+        }
+        cb(null, user.username == un);
+    });
 }
 
 function postRecordR(request, response): void {
     response.end("TBD (record).");
 }
 function postLoginR(request, response): void {
-    response.end("TBD (login).");
-}
-function log_error(str: string): void {
-    let ts = new Date().toString();
-    process.stderr.write("\n" + [ts, str].join(':'));
+    let un = request.body['username'];
+    let pw = request.body['password'];
+
+    
 }
 
+function log_error(str: string): void {
+    log(`ERROR\t ${str}`);
+}
+
+ function log(str: string): void {
+    let ts = new Date().toString();
+    process.stderr.write([ts, str].join(':') + "\n");
+ }
+  
 function registerRoute(r: ExRoute) {
-    log_error("Path: " + [r.method, r.path].join(' '))
+    log("Route: " + [r.method, r.path].join(' '))
     switch (r.method) {
         case "get": gatehouse.get(r.path, r.handler); break;
         case "put": gatehouse.put(r.path, r.handler); break;
@@ -138,19 +243,14 @@ function registerRoute(r: ExRoute) {
 }
 let MDB = null;
 mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
-function mclientHandler(err, db) {
-    console.log(arguments);
+function mclientHandler(err, db) { 
     if (err !== null) {
-        log_error("Mongo connection error: " + err);
+        log_error(`Mongo connection error: ${err}`);
         // This is not production, will not reconnect in future.
         process.exit(1);
     }
+    log(`Connected to ${mongoDatabase}`);
     MDB = db;
-}
-gatehouse.use(serverLogger);
-function serverLogger(request, response, next) {
-    log_error([request.method, request.url, request.ip].join(" "));
-    next();
 }
 _.each(gatehouseRoutes, registerRoute);
 
@@ -162,17 +262,35 @@ process.on('SIGINT', function () {
     }
     process.exit();
 });
-log_error("Starting Gatehouse");
-log_error("Listening on " + gatehousePort);
 
-function registerUser(username: string, password: string) {
+
+function registerUser(username: string, password: string, cb?: Function) {
     let salt = bcryptjs.genSaltSync();
     let hashed = bcryptjs.hashSync(password, salt);
     let users = MDB.collection('users');
+    cb = cb ? cb : ()=>{};
     users.insertOne({
         username: username,
         passhash: hashed,
         salt: salt
+    }, cb);
+}
+
+function getUser(username: string, cb: Function) {
+    var users = MDB.collection('users');
+    users.findOne({username: username}, cb);
+}
+
+function verifyUser(username: string, password: string, cb: Function) {
+    getUser(username, (err, user) => {
+        if (err) {
+            cb(err, false);
+        }
+        var verifier = bcryptjs.hashSync(password, user.salt);
+        if (verifier === user.passhash) {
+            cb(null, true);
+        }
+        cb(null, false);
     });
 }
 

@@ -20,18 +20,31 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@types/bcryptjs": "^2.4.1",
+    "@types/body-parser": "^1.16.5",
+    "@types/connect-flash": "0.0.33",
+    "@types/cookie-parser": "^1.4.1",
+    "@types/csurf": "^1.9.34",
     "@types/express": "^4.0.37",
+    "@types/express-session": "^1.15.3",
     "@types/lodash": "^4.14.74",
     "@types/mongodb": "^2.2.11",
+    "@types/morgan": "^1.7.33",
     "@types/node": "^8.0.29",
     "@types/serve-static": "^1.7.32",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "csurf": "^1.9.0",
     "express": "^4.15.4",
+    "express-session": "^1.15.5",
     "lodash": "^4.17.4",
     "mongodb": "^2.2.31",
+    "morgan": "^1.8.2",
     "muicss": "^0.9.25",
+    "pug": "^2.0.0-rc.4",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1" 
+    "react-dom": "^15.6.1"
   },
   "devDependencies": {
     "typescript": "^2.5.2"

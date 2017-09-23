@@ -1,0 +1,28 @@
+//- layout/default.pug
+doctype html
+html
+  head
+    title gatehouse: #{title}
+    link(rel='stylesheet' href='/css/mui.min.css') 
+    link(rel='stylesheet' href='/css/mui-colors.min.css') 
+    link(rel='stylesheet' href='/css/gatehouse.css') 
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    block scripts
+      script(src='/js/mui.min.js')
+      script(src='/js/lodash.min.js')
+      script(src='/js/react-with-addons.min.js')
+      script(src='/js/react-dom.min.js')
+  body
+    .mui-appbar.mui--bg-color-grey-500(style="margin-bottom: 1rem;")
+        .mui-container
+            .mui-row
+                .mui-col-sm-3
+                    h1 
+                        a.mui--color-black(href="/") gate<b>house</b>
+                .mui-col-sm-8
+                    h1= title
+    #screen
+        .mui-container
+            block content

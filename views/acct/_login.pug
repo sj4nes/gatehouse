@@ -1,0 +1,19 @@
+form.mui-form(method="POST" action="/acct/login")
+    include ../csrf.pug
+    if error 
+        .mui-panel.mui--bg-color-red-100
+            h3 Error
+            p= error
+    if message
+        .mui-panel.mui--bg-color-blue-100
+            h3 Notice
+            p= message    
+    legend Login to Gatehouse
+    div.mui-textfield
+        label(for="username") Username:
+        input(name="username" size=32 placeholder="YOUR NAME HERE")
+    div.mui-textfield
+        label(for="password") Password:
+        input(name="password" size=32 type="password" placeholder="SECRET")
+    button.mui-btn.mui-btn--primary(type="submit") Login
+    button.mui-btn.mui-btn--raised(type="button" onclick="document.location='/acct/register'") Register
