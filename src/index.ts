@@ -230,8 +230,8 @@ function userExists(un: string, cb: Function) {
             cb(err, true); // Don't allow registration if there was an error.
             return;
         }
-        if (!(err && user)) {
-            cb(null, false);
+        if (user) { // Don't re-register the same user.
+            cb(null, true);
             return;
         }
         cb(null, false);
