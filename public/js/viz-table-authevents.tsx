@@ -54,7 +54,7 @@ class AuthEventRecord extends React.Component<{ ae: AuthEvent }> {
         super(props);
     }
     render() {
-        return (<tr data-id="id">
+        return (<tr key={this.props.ae._id}>
             <td>{this.props.ae.timestamp}</td>
             <td>{this.props.ae.ip_address}</td>
             <td>{this.props.ae.username}</td>
