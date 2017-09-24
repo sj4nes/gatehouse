@@ -122,7 +122,9 @@ let gatehouseRoutes: Array<ExRoute> = [
     { method: "get", path: "/", handler: getFrontR }
     , { method: "get", path: "/acct/register", handler: getRegisterR }
     , { method: "post", path: "/acct/register", handler: postRegisterR }
-    , { method: "get", path: "/acct/test", handler: getCreateTestDataR }
+    , { method: "get", path: "/test/generateData", handler: getTestGenerateDataR }
+    , { method: "get", path: "/test/eraseDb", handler: getTestEraseDbR }
+    , { method: "get", path: "/test/eraseAuthEvents", handler: getTestEraseAuthEventsR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
     , { method: "get", path: "/acct/login", handler: getFrontR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
@@ -130,13 +132,33 @@ let gatehouseRoutes: Array<ExRoute> = [
     , { method: "get", path: "/api/1/findRecords", handler: getFindRecordsR }
 ];
 
-function getCreateTestDataR(request, response) {
-    for (var i = 0; i < 50; i++) {
+function getTestGenerateDataR(request, response) {
+    let num = 50;
+    for (var i = 0; i < num; i++) {
         recordAuthEvent(generateAuthEvent());
     }
+    request.flash('info', `Created ${num} test records.`)
     response.redirect("/");
 }
 
+function getTestEraseDbR(request, response) { 
+    MDB.dropDatabase();
+    request.flash('info', `Dropped the database.`)
+    response.redirect("/");
+}
+
+
+function getTestEraseAuthEventsR(request, response) { 
+    MDB.dropCollection('auth_events');
+    request.flash('info', `Dropped the auth_events.`)
+    response.redirect("/");
+}
+
+function getTestEraseUsersR(request, response) { 
+    MDB.dropCollection('users');
+    request.flash('info', `Dropped the users.`)
+    response.redirect("/");
+}
 function getFrontR(request, response): void {
     response.render('index', {
         messages: request.flash('info'),
