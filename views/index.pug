@@ -1,15 +1,19 @@
 extends layout/default.pug
 block content 
   // include legal.pug
-  .mui-container
+  .mui-container-fluid
     .mui-row
-      .mui-col-sm-5
-        h2 A Demonstration Site
-        p Please refer to the documentation at <a href="">Github</a>.
+      .mui-col-sm-3
         include acct/_login.pug
       
-      .mui-col-sm-3.mui--divider-left
-        h3 Test Actions
+      .mui-col-sm-9.mui--divider-left
+        h2 Built with MERN
+        p 
+         | There are many technology stacks used to build websites. This demonstration site
+         | is built with MongoDB, Express.js, React.js and Node.js.
+
+        p Please refer to the documentation at <a href="">Github</a>.
+        h2 Test Actions
         a.mui-btn.mui-btn--raised(href="/acct/dashboard") Dashboard
         p The following test commands will create or destroy data within the system.
         a.mui-btn.mui-btn--raised(href="/test/generateData") Generate Test Data
