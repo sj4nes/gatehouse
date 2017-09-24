@@ -1,2 +1,2 @@
 #!/bin/sh
-npm run build && npm start
+tsc && npm run build && npm start
