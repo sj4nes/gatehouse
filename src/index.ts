@@ -48,6 +48,7 @@ interface AuthEvent {
     user_agent: string;
     result: AuthResult;
 }
+
 function randrange(start: number, end: number): number {
     // This is really not intended to be precise.
     return Math.floor(Math.random() * (end - start)) + start;
@@ -127,6 +128,7 @@ let gatehouseRoutes: Array<ExRoute> = [
     , { method: "get", path: "/test/eraseAuthEvents", handler: getTestEraseAuthEventsR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
     , { method: "get", path: "/acct/login", handler: getFrontR }
+    , { method: "get", path: "/acct/logout", handler: getLogoutR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
     , { method: "get", path: "/acct/dashboard", handler: getDashboardR }
     , { method: "get", path: "/api/1/findRecords", handler: getFindRecordsR }
@@ -138,7 +140,7 @@ function getTestGenerateDataR(request, response) {
         recordAuthEvent(generateAuthEvent());
     }
     request.flash('info', `Created ${num} test records.`)
-    response.redirect("/");
+    response.redirect("/acct/dashboard");
 }
 
 function getTestEraseDbR(request, response) { 
@@ -151,7 +153,7 @@ function getTestEraseDbR(request, response) {
 function getTestEraseAuthEventsR(request, response) { 
     MDB.dropCollection('auth_events');
     request.flash('info', `Dropped the auth_events.`)
-    response.redirect("/");
+    response.redirect("/acct/dashboard");
 }
 
 function getTestEraseUsersR(request, response) { 
@@ -164,7 +166,8 @@ function getFrontR(request, response): void {
         messages: request.flash('info'),
         errors: request.flash('error'),
         title: "",
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(),
+        username: request.session.username
     });
 }
 
@@ -175,7 +178,8 @@ function getDashboardR(request, response): void {
         messages: request.flash('info'),
         errors: request.flash('error'),
         title: "Dashboard",
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(),
+        username: request.session.username
     });
 }
 
@@ -185,7 +189,8 @@ function getRegisterR(request, response): void {
         messages: request.flash('info'),
         errors: request.flash('error'),
         title: "Account Registration",
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(),
+        username: request.session.username
     });
 }
 
@@ -277,6 +282,11 @@ function userExists(un: string, cb: Function) {
 function postRecordR(request, response): void {
     response.end("TBD (record).");
 }
+function getLogoutR(request, response): void {
+    request.flash("info", `Thank you ${request.session.username}, you are now logged out.`);
+    request.session.username = null;
+    response.redirect("/");
+}
 function postLoginR(request, response): void {
     let un = request.body['username'];
     let pw = request.body['password'];
@@ -294,6 +304,7 @@ function postLoginR(request, response): void {
             return;
         }
         request.flash("info", "Access permitted.");
+        request.session.username = un;
         response.redirect("/acct/dashboard");
     }
 }
