@@ -119,6 +119,8 @@ interface ExRoute {
     handler: Function;
 }
 
+// FIXME Need to add authorization middleware to routing to exclude API/pages from unauthenticated users. In other words,
+// this has *authentication* but not *authorization* checks.
 let gatehouseRoutes: Array<ExRoute> = [
     { method: "get", path: "/", handler: getFrontR }
     , { method: "get", path: "/acct/register", handler: getRegisterR }
