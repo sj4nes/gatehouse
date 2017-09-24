@@ -54,7 +54,7 @@ class AuthEventRecord extends React.Component<{ ae: AuthEvent }> {
         super(props);
     }
     render() {
-        return (<tr key={this.props.ae._id}>
+        return (<tr>
             <td>{this.props.ae.timestamp}</td>
             <td>{this.props.ae.ip_address}</td>
             <td>{this.props.ae.username}</td>
@@ -69,7 +69,7 @@ class VizTable extends React.Component<{ rows?: AuthEvents }> {
     render() {
         var rowcomps = [];
         this.props.rows.forEach((r) => {
-            rowcomps.push(<AuthEventRecord ae={r} />);
+            rowcomps.push(<AuthEventRecord key={r._id} ae={r} />);
         })
         return (<table className="mui-table">
             <thead>
