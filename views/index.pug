@@ -2,4 +2,10 @@ extends layout/default.pug
 block content 
   include legal.pug
   include acct/_login.pug
-  a.mui-btn(href="/acct/test") Generate Test Data
+  hr
+  a.mui-btn(href="/acct/dashboard") Dashboard
+  p The following test commands will create or destroy data within the system.
+  a.mui-btn(href="/test/generateData") Generate Test Data
+  a.mui-btn(href="/test/eraseAuthEvents") Erase Auth Events
+  a.mui-btn(href="/test/eraseUsers") Erase Users
+  a.mui-btn(href="/test/eraseDb") Erase Database (All Data)
