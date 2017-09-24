@@ -77,6 +77,6 @@ Vagrant.configure("2") do |config|
      mkdir -p /data/db && chown vagrant /data/db
      sudo -u vagrant '/vagrant/start-mongod.sh'
      cd /vagrant/
-     npm start
+     sudo -u vagrant '/vagrant/start-server.sh'
   SHELL
 end
