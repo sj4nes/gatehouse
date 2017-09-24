@@ -127,6 +127,7 @@ let gatehouseRoutes: Array<ExRoute> = [
     , { method: "get", path: "/acct/login", handler: getFrontR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
     , { method: "get", path: "/acct/dashboard", handler: getDashboardR }
+    , { method: "get", path: "/api/1/findRecords", handler: getFindRecordsR }
 ];
 
 function getCreateTestDataR(request, response) {
@@ -164,6 +165,18 @@ function getRegisterR(request, response): void {
         title: "Account Registration",
         csrfToken: request.csrfToken()
     });
+}
+
+function getFindRecordsR(request, response): void {
+    var auth_events = MDB.collection('auth_events');
+    auth_events.find().toArray(processRecords);
+    function processRecords(err, recs) { 
+        if (err) {
+            response.end(err);
+            return;
+        }
+        response.end(JSON.stringify(recs));
+    }
 }
 
 function postRegisterR(request, response): void {
