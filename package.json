@@ -30,6 +30,8 @@
     "@types/mongodb": "^2.2.11",
     "@types/morgan": "^1.7.33",
     "@types/node": "^8.0.29",
+    "@types/react": "^16.0.5",
+    "@types/react-dom": "^15.5.4",
     "@types/serve-static": "^1.7.32",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",

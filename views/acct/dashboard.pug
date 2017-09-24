@@ -1,4 +1,30 @@
-extends ../layout/default.pug
+extends ../layout/default.pug 
+prepend scripts
+  script
+    | var exports = {};
 block content
-  p Dashboard loaded.
-  button.mui-btn.mui-btn--raised(onclick="document.location='/api/1/findRecords';") Test Find Records
+  .mui-row
+    .mui-col-sm-3
+      h3 Test Actions
+      button.mui-btn.mui-btn--raised(onclick="document.location='/api/1/findRecords';") Test Find Records
+    .mui-col-sm-8.mui--divider-left
+      table.mui-table#authevents
+        thead
+          tr
+            th Col 1
+            th Col 2
+            th Col 3
+        tbody
+          tr
+            td Content
+            td Content
+            td Content                            
+          tr
+            td Content
+            td Content
+            td Content                            
+          tr
+            td Content
+            td Content
+            td Content
+  script(src='/js/viz-table-authevents.js')

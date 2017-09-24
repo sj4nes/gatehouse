@@ -2,3 +2,5 @@ node_modules/*
 .vagrant/* 
 db/*
 src/index.js
+public/js/viz-*.jsx
+public/js/viz-*.js
