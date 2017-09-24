@@ -84,12 +84,12 @@ class VizTable extends React.Component<{ rows?: AuthEvents }> {
 var recs = [];
 function loadRecords() {
     let api = "/api/1/findRecords";
-    var client = new XMLHttpRequest();
-    client.onload = function () {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
         // in case of network errors this might not give reliable results
-        if (200 == this.status) {
+        if (200 == xhr.status) {
             try {
-                var json = JSON.parse(this.responseText);
+                var json = JSON.parse(xhr.responseText);
                 recs = json;
                 recs.sort(cmpTimestamp);
 
@@ -99,12 +99,12 @@ function loadRecords() {
                 );
 
             } catch (e) {
-                console.log(`error parsing data: ${this.responseText}`);
+                console.log(`error parsing data: ${xhr.responseText}`);
             }
         }
     }
-    client.open("GET", api);
-    client.send();
+    xhr.open("GET", api, true);
+    xhr.send();
 }
 
 // Idealy MongoDB should do this heavy-lifting.
