@@ -1,9 +1,0 @@
-# -*- mode: python; -*-
-
-Import("env")
-
-env.SConscript(
-    dirs=[
-        'msi',
-    ],
-)

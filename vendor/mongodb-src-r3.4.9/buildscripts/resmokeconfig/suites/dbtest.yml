@@ -1,8 +1,0 @@
-selector:
-  db_test: {}
-
-executor:
-  db_test:
-    config:
-      dbtest_options:
-        dur: ''

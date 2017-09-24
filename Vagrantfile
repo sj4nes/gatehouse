@@ -12,7 +12,11 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "generic/debian9" 
+  # config.vm.box = "generic/debian9" 
+  
+  config.vm.box = "fedora/25-cloud-base"
+  config.vm.box_version = "20161122"
+
   config.vm.provider :libvirt do |libvirt|
     libvirt.memory = "4096"
     libvirt.cpus = 3
@@ -26,7 +30,7 @@ Vagrant.configure("2") do |config|
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 3000, host: 3080
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -68,14 +72,16 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
-     apt-get update
-     time apt-get install -y gcc libssl-dev zlib1g-dev scons libboost1.62-all-dev
+
+  # Fedora provisioning
+   config.vm.provision "shell", inline: <<-SHELL
+     dnf update
+     time dnf install -y nodejs mongodb mongodb-server
      # Node already unpacked prior to rsync.
-     time cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
-     time cd /vagrant/vendor/mongodb-src-r3.4.9 &&  scons -j8 --prefix=/opt/mongo --use-system-boost  install
+     #time cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
+     #time cd /vagrant/vendor/mongodb-src-r3.4.9 &&  scons -j8 --prefix=/opt/mongo --use-system-boost  install
      mkdir -p /data/db && chown vagrant /data/db
-     sudo -u vagrant '/vagrant/start-mongod.sh'
+     sudo -u vagrant '/vagrant/start-mongod-fedora.sh'
      cd /vagrant/
      sudo -u vagrant '/vagrant/start-server.sh'
   SHELL
