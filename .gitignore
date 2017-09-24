@@ -4,3 +4,4 @@ db/*
 src/index.js
 public/js/viz-*.jsx
 public/js/viz-*.js
+npm-debug.log
