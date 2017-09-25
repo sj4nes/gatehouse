@@ -74,15 +74,11 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
 
   # Fedora provisioning
-   config.vm.provision "shell", inline: <<-SHELL
-     dnf update
+   config.vm.provision "shell", inline: <<-SHELL 
      time dnf install -y nodejs mongodb mongodb-server
-     # Node already unpacked prior to rsync.
-     #time cd /vagrant/vendor/node-v6.11.3 && ./configure && make -j8 && make install && make clean 
-     #time cd /vagrant/vendor/mongodb-src-r3.4.9 &&  scons -j8 --prefix=/opt/mongo --use-system-boost  install
      mkdir -p /data/db && chown vagrant /data/db
      sudo -u vagrant '/vagrant/start-mongod-fedora.sh'
-     cd /vagrant/
-     sudo -u vagrant '/vagrant/start-server.sh'
+     cd /vagrant/ 
+     sudo -u vagrant '/vagrant/start-server.sh' 
   SHELL
 end
