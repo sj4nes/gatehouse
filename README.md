@@ -6,4 +6,4 @@
  * `git clone https://github.com/sj4nes/gatehouse`
  * `cd gatehouse`
  * `vagrant up`
- * Browse to http://127.0.0.1:3000/ after Vagrant completes provisioning.
+ * Browse to http://127.0.0.1:3080/ after Vagrant completes provisioning.
