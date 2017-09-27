@@ -109,7 +109,7 @@ function generateIAuthEvent(): IAuthEvent {
 }
 
 function recordIAuthEvent(ae: IAuthEvent) {
-    const recorder = MDB.collection("authEvents");
+    const recorder = MDB.collection("auth_events");
     recorder.insertOne(ae);
 }
 
@@ -128,7 +128,7 @@ const gatehouseRoutes: IExRoute[] = [
     , { method: "post", path: "/acct/register", handler: postRegisterR }
     , { method: "get", path: "/test/generateData", handler: getTestGenerateDataR }
     , { method: "get", path: "/test/eraseDb", handler: getTestEraseDbR }
-    , { method: "get", path: "/test/eraseIAuthEvents", handler: getTestEraseIAuthEventsR }
+    , { method: "get", path: "/test/eraseAuthEvents", handler: getTestEraseAuthEventsR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
     , { method: "get", path: "/acct/login", handler: getFrontR }
     , { method: "get", path: "/acct/logout", handler: getLogoutR }
@@ -153,8 +153,8 @@ function getTestEraseDbR(request, response) {
     response.redirect("/");
 }
 
-function getTestEraseIAuthEventsR(request, response) {
-    MDB.dropCollection("authEvents");
+function getTestEraseAuthEventsR(request, response) {
+    MDB.dropCollection("auth_events");
     request.flash("info", `Dropped the authEvents.`);
     response.redirect("/acct/dashboard");
 }
