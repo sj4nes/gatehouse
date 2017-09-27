@@ -5,7 +5,7 @@ class AuthEventFields extends React.Component {
     constructor(props) {
         super(props);
     }
-    render() {
+    public render() {
         return (<tr>
             <th>Timestamp</th>
             <th>IP Address</th>
@@ -19,12 +19,13 @@ class AuthEventFields extends React.Component {
          */
     }
 }
-class TableHeader extends React.Component<{ fields: Array<string> }> {
+
+class TableHeader extends React.Component<{ fields: string[] }> {
     constructor(props) {
         super(props);
     }
-    render() {
-        var fs = [];
+    public render() {
+        const fs = [];
         function newField(name: string): TableHeaderField {
             return (new TableHeaderField(name));
         }
@@ -32,15 +33,16 @@ class TableHeader extends React.Component<{ fields: Array<string> }> {
         return (<tr>{fs}</tr>);
     }
 }
+
 class TableHeaderField extends React.Component<{ name: string }> {
     constructor(props) {
         super(props);
     }
-    render() {
+    public render() {
         return (<th>{this.props.name}</th>);
     }
 }
-interface AuthEvent {
+interface IAuthEvent {
     _id: string;
     timestamp: string;
     ip_address: string;
@@ -49,11 +51,11 @@ interface AuthEvent {
     result: string;
 }
 
-class AuthEventRecord extends React.Component<{ ae: AuthEvent }> {
+class AuthEventRecord extends React.Component<{ ae: IAuthEvent }> {
     constructor(props) {
         super(props);
     }
-    render() {
+    public render() {
         return (<tr>
             <td>{this.props.ae.timestamp}</td>
             <td>{this.props.ae.ip_address}</td>
@@ -63,14 +65,14 @@ class AuthEventRecord extends React.Component<{ ae: AuthEvent }> {
         </tr>);
     }
 }
-type AuthEvents = Array<AuthEvent>;
+type AuthEvents = IAuthEvent[];
 
 class VizTable extends React.Component<{ rows?: AuthEvents }> {
-    render() {
-        var rowcomps = [];
+    public render() {
+        const rowcomps = [];
         this.props.rows.forEach((r) => {
             rowcomps.push(<AuthEventRecord key={r._id} ae={r} />);
-        })
+        });
         return (<table className="mui-table">
             <thead>
                 <AuthEventFields />
@@ -81,28 +83,29 @@ class VizTable extends React.Component<{ rows?: AuthEvents }> {
         </table>);
     }
 }
-var recs = [];
+let recs = [];
 function loadRecords() {
-    let api = "/api/1/findRecords";
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
+    const api = "/api/1/findRecords";
+    const xhr = new XMLHttpRequest();
+    xhr.onload = () => {
         // in case of network errors this might not give reliable results
-        if (200 == xhr.status) {
+        if (200 === xhr.status) {
             try {
-                var json = JSON.parse(xhr.responseText);
+                const json = JSON.parse(xhr.responseText);
                 recs = json;
                 recs.sort(cmpTimestamp);
 
                 ReactDOM.render(
                     <VizTable rows={recs} />,
-                    document.getElementById('authevents')
+                    document.getElementById("authevents"),
                 );
 
             } catch (e) {
+                // tslint:disable-next-line:no-console
                 console.log(`error parsing data: ${xhr.responseText}`);
             }
         }
-    }
+    };
     xhr.open("GET", api, true);
     xhr.send();
 }
@@ -111,7 +114,7 @@ function loadRecords() {
 function timestampToNumeric(ts: string) {
     return new Date(ts).getTime();
 }
-function cmpTimestamp(a: AuthEvent, b: AuthEvent): number {
+function cmpTimestamp(a: IAuthEvent, b: IAuthEvent): number {
     return timestampToNumeric(a.timestamp) >= timestampToNumeric(b.timestamp) ? -1 : 1;
 }
 

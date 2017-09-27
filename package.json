@@ -7,7 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "node_modules/typescript/bin/tsc src/index.ts",
+    "build": "tslint --project tsconfig.json && node_modules/typescript/bin/tsc src/index.ts",
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -46,7 +46,8 @@
     "muicss": "^0.9.25",
     "pug": "^2.0.0-rc.4",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react-dom": "^15.6.1",
+    "tslint": "^5.7.0"
   },
   "devDependencies": {
     "typescript": "^2.5.2"

@@ -1,33 +1,34 @@
 // Gatehouse
+import * as bcryptjs from "bcryptjs";
+import * as bodyParser from "body-parser";
+import * as cookieParser from "cookie-parser";
+import * as csurf from "csurf";
+import * as express from "express";
+import * as session from "express-session";
 import * as http from "http";
 import * as _ from "lodash";
-import * as path from "path";
-import * as bcryptjs from "bcryptjs";
 import * as mongodb from "mongodb";
-import * as csurf from "csurf";
-import * as cookieParser from "cookie-parser";
-import * as bodyParser from "body-parser";
-import * as session from "express-session";
 import * as morgan from "morgan";
-var flash = require('connect-flash');
+import * as path from "path";
+// tslint:disable-next-line:no-var-requires
+const flash = require("connect-flash");
 
 // Configuration
-let gatehousePort = 3000;
-let mongoDatabase = "mongodb://localhost:27017/gatehouse";
+const gatehousePort = 3000;
+const mongoDatabase = "mongodb://localhost:27017/gatehouse";
 
 log(`Initializing Gatehouse on :${gatehousePort}`);
 
-let express = require('express');
-let gatehouse = express();
-gatehouse.set('view engine', 'pug');
-gatehouse.set('views', './views');
-gatehouse.use(morgan('common'));
+const gatehouse = express();
+gatehouse.set("view engine", "pug");
+gatehouse.set("views", "./views");
+gatehouse.use(morgan("common"));
 gatehouse.use(bodyParser.urlencoded({ extended: false }));
 gatehouse.use(cookieParser());
 gatehouse.use(session({
-    secret: "fidelio-alskfwenr2234oin234o32in4o23i4o3r",
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
+    secret: "fidelio-alskfwenr2234oin234o32in4o23i4o3r",
 }));
 gatehouse.use(flash());
 gatehouse.use(csurf());
@@ -35,17 +36,17 @@ gatehouse.use(csurf());
 type HttpMethod = "get" | "put" | "post" | "delete" | "*";
 type AuthResult = "auth-pass" | "auth-fail" | "auth-unknown" | "auth-error" | "auth-end";
 
-interface GatehouseUser {
+interface IGatehouseUser {
     username: string;
     passhash: string;
     role: string;
 }
 
-interface AuthEvent {
+interface IAuthEvent {
     timestamp: string;
-    ip_address: string;
+    ipAddress: string;
     username: string;
-    user_agent: string;
+    userAgent: string;
     result: AuthResult;
 }
 
@@ -54,21 +55,21 @@ function randrange(start: number, end: number): number {
     return Math.floor(Math.random() * (end - start)) + start;
 }
 function randomTimeStamp(): string {
-    let year = randrange(1971, 2017);
-    let month = randrange(1, 12);
-    let day = randrange(1, 28); // Goodness, we don't believe in anything other than February.
-    let hour = randrange(1, 23);
-    let minute = randrange(1, 59);
-    let sec = randrange(1, 59);
+    const year = randrange(1971, 2017);
+    const month = randrange(1, 12);
+    const day = randrange(1, 28); // Goodness, we don't believe in anything other than February.
+    const hour = randrange(1, 23);
+    const minute = randrange(1, 59);
+    const sec = randrange(1, 59);
     return new Date(year, month, day, hour, minute, sec).toUTCString();
 }
 function randomIP(): string {
     // These are of course utter-nonsense.
-    let a = Math.floor(Math.random() * (255 - 1) + 1);
-    let b = Math.floor(Math.random() * (255 - 1) + 1);
-    let c = Math.floor(Math.random() * (255 - 1) + 1);
-    let d = Math.floor(Math.random() * (255 - 1) + 1);
-    return ":ffff:" + [a, b, c, d].join('.');
+    const a = Math.floor(Math.random() * (255 - 1) + 1);
+    const b = Math.floor(Math.random() * (255 - 1) + 1);
+    const c = Math.floor(Math.random() * (255 - 1) + 1);
+    const d = Math.floor(Math.random() * (255 - 1) + 1);
+    return ":ffff:" + [a, b, c, d].join(".");
 }
 
 function randomUsername(): string {
@@ -80,7 +81,7 @@ function randomUserAgent(): string {
 }
 
 function randomResult(): AuthResult {
-    let observation = Math.random();
+    const observation = Math.random();
     if (observation < 0.005) {
         return "auth-error";
     }
@@ -96,110 +97,107 @@ function randomResult(): AuthResult {
     return "auth-pass";
 }
 
-function generateAuthEvent(): AuthEvent {
-    let ae: AuthEvent =
-        {
-            timestamp: randomTimeStamp(),
-            ip_address: randomIP(),
-            username: randomUsername(),
-            user_agent: randomUserAgent(),
-            result: randomResult()
-        };
+function generateIAuthEvent(): IAuthEvent {
+    const ae: IAuthEvent = {
+        ipAddress: randomIP(),
+        result: randomResult(),
+        timestamp: randomTimeStamp(),
+        userAgent: randomUserAgent(),
+        username: randomUsername(),
+    };
     return ae;
 }
 
-function recordAuthEvent(ae: AuthEvent) {
-    let recorder = MDB.collection('auth_events');
+function recordIAuthEvent(ae: IAuthEvent) {
+    const recorder = MDB.collection("authEvents");
     recorder.insertOne(ae);
 }
 
-interface ExRoute {
+interface IExRoute {
     method: HttpMethod;
     path: string;
-    handler: Function;
+    handler: (request, response) => void;
 }
 
-// FIXME Need to add authorization middleware to routing to exclude API/pages from unauthenticated users. In other words,
+// FIXME Need to add authorization middleware to routing to
+// exclude API/pages from unauthenticated users. In other words,
 // this has *authentication* but not *authorization* checks.
-let gatehouseRoutes: Array<ExRoute> = [
+const gatehouseRoutes: IExRoute[] = [
     { method: "get", path: "/", handler: getFrontR }
     , { method: "get", path: "/acct/register", handler: getRegisterR }
     , { method: "post", path: "/acct/register", handler: postRegisterR }
     , { method: "get", path: "/test/generateData", handler: getTestGenerateDataR }
     , { method: "get", path: "/test/eraseDb", handler: getTestEraseDbR }
-    , { method: "get", path: "/test/eraseAuthEvents", handler: getTestEraseAuthEventsR }
+    , { method: "get", path: "/test/eraseIAuthEvents", handler: getTestEraseIAuthEventsR }
     , { method: "post", path: "/acct/login", handler: postLoginR }
     , { method: "get", path: "/acct/login", handler: getFrontR }
     , { method: "get", path: "/acct/logout", handler: getLogoutR }
     , { method: "post", path: "/api/1/record", handler: postRecordR }
     , { method: "get", path: "/acct/dashboard", handler: getDashboardR }
     , { method: "get", path: "/api/1/findRecords", handler: getFindRecordsR }
+    ,
 ];
 
 function getTestGenerateDataR(request, response) {
-    let num = 50;
-    for (var i = 0; i < num; i++) {
-        recordAuthEvent(generateAuthEvent());
+    const num = 50;
+    for (let i = 0; i < num; i++) {
+        recordIAuthEvent(generateIAuthEvent());
     }
-    request.flash('info', `Created ${num} test records.`)
+    request.flash("info", `Created ${num} test records.`);
     response.redirect("/acct/dashboard");
 }
 
-function getTestEraseDbR(request, response) { 
+function getTestEraseDbR(request, response) {
     MDB.dropDatabase();
-    request.flash('info', `Dropped the database.`)
+    request.flash("info", `Dropped the database.`);
     response.redirect("/");
 }
 
-
-function getTestEraseAuthEventsR(request, response) { 
-    MDB.dropCollection('auth_events');
-    request.flash('info', `Dropped the auth_events.`)
+function getTestEraseIAuthEventsR(request, response) {
+    MDB.dropCollection("authEvents");
+    request.flash("info", `Dropped the authEvents.`);
     response.redirect("/acct/dashboard");
 }
 
-function getTestEraseUsersR(request, response) { 
-    MDB.dropCollection('users');
-    request.flash('info', `Dropped the users.`)
+function getTestEraseUsersR(request, response) {
+    MDB.dropCollection("users");
+    request.flash("info", `Dropped the users.`);
     response.redirect("/");
 }
 function getFrontR(request, response): void {
-    response.render('index', {
-        messages: request.flash('info'),
-        errors: request.flash('error'),
-        title: "",
+    response.render("index", {
         csrfToken: request.csrfToken(),
-        username: request.session.username
+        errors: request.flash("error"),
+        messages: request.flash("info"),
+        title: "",
+        username: request.session.username,
     });
 }
-
-
 
 function getDashboardR(request, response): void {
-    response.render('acct/dashboard', {
-        messages: request.flash('info'),
-        errors: request.flash('error'),
-        title: "Dashboard",
+    response.render("acct/dashboard", {
         csrfToken: request.csrfToken(),
-        username: request.session.username
+        errors: request.flash("error"),
+        messages: request.flash("info"),
+        title: "Dashboard",
+        username: request.session.username,
     });
 }
 
-
 function getRegisterR(request, response): void {
-    response.render('acct/register', {
-        messages: request.flash('info'),
-        errors: request.flash('error'),
-        title: "Account Registration",
+    response.render("acct/register", {
         csrfToken: request.csrfToken(),
-        username: request.session.username
+        errors: request.flash("error"),
+        messages: request.flash("info"),
+        title: "Account Registration",
+        username: request.session.username,
     });
 }
 
 function getFindRecordsR(request, response): void {
-    var auth_events = MDB.collection('auth_events');
-    auth_events.find().toArray(processRecords);
-    function processRecords(err, recs) { 
+    const authEvents = MDB.collection("auth_events");
+    authEvents.find().toArray(processRecords);
+    function processRecords(err, recs) {
         if (err) {
             response.end(err);
             return;
@@ -209,24 +207,24 @@ function getFindRecordsR(request, response): void {
 }
 
 function postRegisterR(request, response): void {
-    // Unpack form parameters. 
-    let un = request.body['username'];
-    let pw = request.body['password'];
-    let pwc = request.body['confirm'];
+    // Unpack form parameters.
+    const un = request.body.username;
+    const pw = request.body.password;
+    const pwc = request.body.confirm;
 
-    // cases: 
+    // cases:
     //    mismatched passwords
-    //    pre-existing user  
+    //    pre-existing user
     if (pw !== pwc) {
         request.flash("error", "Password and password confirmation do not match.");
-        response.redirect('/acct/register');
+        response.redirect("/acct/register");
         return;
     }
     // Utilities and behaviors
 
     function genericDatabaseError() {
         request.flash("error", "Database error returned.");
-        response.redirect('/acct/register');
+        response.redirect("/acct/register");
         return;
     }
 
@@ -237,7 +235,7 @@ function postRegisterR(request, response): void {
         }
         if (exists) {
             request.flash("error", "Username already exists.");
-            response.redirect('/acct/register');
+            response.redirect("/acct/register");
             return;
         }
         createUser();
@@ -254,7 +252,7 @@ function postRegisterR(request, response): void {
         }
         if (created) {
             request.flash("info", "Account created, please login.");
-            response.redirect('/acct/login');
+            response.redirect("/acct/login");
             return;
         }
         request.flash("error", "Unknown error creating account.");
@@ -266,7 +264,7 @@ function postRegisterR(request, response): void {
     userExists(un, maybeExists);
 }
 
-function userExists(un: string, cb: Function) {
+function userExists(un: string, cb: (err, exists) => void) {
     function eitherErrorUser(err, user) {
         if (err) {
             cb(err, true); // Don't allow registration if there was an error.
@@ -290,10 +288,10 @@ function getLogoutR(request, response): void {
     response.redirect("/");
 }
 function postLoginR(request, response): void {
-    let un = request.body['username'];
-    let pw = request.body['password'];
+    const un = request.body.username;
+    const pw = request.body.password;
 
-    verifyUser(request.ip, request.user_agent, un, pw, eitherErrorVerified);
+    verifyUser(request.ip, request.userAgent, un, pw, eitherErrorVerified);
     function eitherErrorVerified(err, verified) {
         if (err) {
             request.flash("error", "There was an error accessing the account.");
@@ -316,12 +314,12 @@ function log_error(str: string): void {
 }
 
 function log(str: string): void {
-    let ts = new Date().toString();
-    process.stderr.write([ts, str].join(':') + "\n");
+    const ts = new Date().toString();
+    process.stderr.write([ts, str].join(":") + "\n");
 }
 
-function registerRoute(r: ExRoute) {
-    log("Route: " + [r.method, r.path].join(' '))
+function registerRoute(r: IExRoute) {
+    log("Route: " + [r.method, r.path].join(" "));
     switch (r.method) {
         case "get": gatehouse.get(r.path, r.handler); break;
         case "put": gatehouse.put(r.path, r.handler); break;
@@ -346,7 +344,7 @@ function mclientHandler(err, db) {
 }
 _.each(gatehouseRoutes, registerRoute);
 
-process.on('SIGINT', function () {
+process.on("SIGINT", () => {
     log_error("SIGINT: Caught.");
     if (MDB !== null) {
         log_error("Closing database connection.");
@@ -355,80 +353,79 @@ process.on('SIGINT', function () {
     process.exit();
 });
 
-
-function registerUser(username: string, password: string, cb?: Function) {
-    let salt = bcryptjs.genSaltSync();
-    let hashed = bcryptjs.hashSync(password, salt);
-    let users = MDB.collection('users');
-    cb = cb ? cb : () => { };
+function registerUser(username: string, password: string, cb?: (err: string, created: boolean) => void) {
+    const salt = bcryptjs.genSaltSync();
+    const hashed = bcryptjs.hashSync(password, salt);
+    const users = MDB.collection("users");
+    cb = cb ? cb : (): void => { return; };
     users.insertOne({
-        username: username,
         passhash: hashed,
-        salt: salt
+        salt,
+        username,
     }, cb);
 }
 
-function getUser(username: string, cb: Function) {
-    var users = MDB.collection('users');
-    users.findOne({ username: username }, cb);
+function getUser(username: string, cb: (err, user) => void) {
+    const users = MDB.collection("users");
+    users.findOne({ username }, cb);
 }
 
 function getTimestamp(): string {
-    let now = new Date();
+    const now = new Date();
     return now.toUTCString();
 }
 
-function verifyUser(ip: string, user_agent: string, username: string, password: string, cb: Function) {
+function verifyUser(ip: string, userAgent: string, username: string, password: string, cb: (err, verified) => void) {
     getUser(username, eitherErrorMaybeUser);
     function eitherErrorMaybeUser(err, user) {
         if (err) {
-            let ae: AuthEvent = {
+            const authError: IAuthEvent = {
+                ipAddress: ip,
+                result: "auth-error",
                 timestamp: getTimestamp(),
-                ip_address: ip,
-                username: username,
-                user_agent: user_agent,
-                result: "auth-error"
+                userAgent,
+                username,
             };
-            recordAuthEvent(ae);
+            recordIAuthEvent(authError);
             cb(err, null);
             return;
         }
         if (!err && !user) {
-            let ae: AuthEvent = {
+            const authUnknown: IAuthEvent = {
+                ipAddress: ip,
+                result: "auth-unknown",
                 timestamp: getTimestamp(),
-                ip_address: ip,
-                username: username,
-                user_agent: user_agent,
-                result: "auth-unknown"
+                userAgent,
+                username,
             };
-            recordAuthEvent(ae);
+            recordIAuthEvent(authUnknown);
             cb(null, false);
             return;
         }
-        var verifier = bcryptjs.hashSync(password, user.salt);
+        const verifier = bcryptjs.hashSync(password, user.salt);
         if (verifier === user.passhash) {
-            let ae: AuthEvent = {
+            const authPassed: IAuthEvent = {
+                ipAddress: ip,
+                result: "auth-pass",
                 timestamp: getTimestamp(),
-                ip_address: ip,
-                username: username,
-                user_agent: user_agent,
-                result: "auth-pass"
+                userAgent,
+                username,
             };
-            recordAuthEvent(ae);
+            recordIAuthEvent(authPassed);
             cb(null, true);
             return;
         }
-        let ae: AuthEvent = {
+        const ae: IAuthEvent = {
+            ipAddress: ip,
+            result: "auth-fail",
             timestamp: getTimestamp(),
-            ip_address: ip,
-            username: username,
-            user_agent: user_agent,
-            result: "auth-fail"
+            userAgent,
+            username,
         };
-        recordAuthEvent(ae);
+        recordIAuthEvent(ae);
         cb(null, false);
     }
 }
 
-gatehouse.use(express.static('public'));
+gatehouse.use(express.static("public"));
 http.createServer(gatehouse).listen(gatehousePort);
