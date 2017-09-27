@@ -284,6 +284,14 @@ function postRecordR(request, response): void {
 }
 function getLogoutR(request, response): void {
     request.flash("info", `Thank you ${request.session.username}, you are now logged out.`);
+    const authLogout: IAuthEvent = {
+        ipAddress: request.ip,
+        result: "auth-end",
+        timestamp: getTimestamp(),
+        userAgent: request.user_agent,
+        username: request.session.username,
+    };
+    recordIAuthEvent(authLogout);
     request.session.username = null;
     response.redirect("/");
 }
