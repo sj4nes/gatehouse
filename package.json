@@ -7,7 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "tslint --project tsconfig.json && node_modules/typescript/bin/tsc src/index.ts",
+    "build": "npm run quality:lint && node_modules/typescript/bin/tsc src/index.ts",
+    "quality:lint": "tslint --project tsconfig.json",
+    "quality:unittests": "npm test",
     "start": "node src/index.js",
     "test": "jasmine"
   },

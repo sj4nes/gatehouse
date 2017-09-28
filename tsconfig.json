@@ -5,6 +5,8 @@
     },
     "files": [
         "public/js/viz-table-authevents.tsx",
-        "src/index.ts"
+        "src/index.ts",
+        "**/*[sS]pec.ts",
+        "helpers/**/*.ts"
     ]
 }
