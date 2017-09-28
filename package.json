@@ -9,7 +9,7 @@
   "scripts": {
     "build": "tslint --project tsconfig.json && node_modules/typescript/bin/tsc src/index.ts",
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jasmine"
   },
   "keywords": [
     "monitoring",
@@ -50,6 +50,7 @@
     "tslint": "^5.7.0"
   },
   "devDependencies": {
+    "jasmine": "^2.8.0",
     "typescript": "^2.5.2"
   }
 }
