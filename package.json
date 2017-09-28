@@ -7,11 +7,13 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "npm run quality:lint && node_modules/typescript/bin/tsc src/index.ts",
+    "build": "npm run quality:lint && npm run build:typescript",
+    "build:typescript": "node_modules/typescript/bin/tsc",
+    "quality": "npm run quality:lint && npm run quality:unit-tests",
     "quality:lint": "tslint --project tsconfig.json",
-    "quality:unittests": "npm test",
+    "quality:unit-tests": "npm run build:typescript && jasmine",
     "start": "node src/index.js",
-    "test": "jasmine"
+    "test": "npm run quality:unit-tests"
   },
   "keywords": [
     "monitoring",
