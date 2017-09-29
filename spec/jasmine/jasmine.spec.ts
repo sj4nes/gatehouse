@@ -1,6 +1,6 @@
 // Jasmine Works.
 
-describe("Jasmine works as intended.", function() {
+describe("Jasmine works as intended.", () => {
   let a;
 
   it("runs a test", () => {
