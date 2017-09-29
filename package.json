@@ -9,12 +9,13 @@
   "scripts": {
     "build": "npm run quality:lint && npm run build:typescript",
     "build:typescript": "node_modules/typescript/bin/tsc",
+    "nonfunctional:documentation": "mkdir -p doc && typedoc --out doc/ src/index.ts",
     "quality": "npm run quality:lint && npm run quality:unit-tests",
     "quality:lint": "tslint --project tsconfig.json",
     "quality:unit-tests": "npm run build:typescript && jasmine",
     "start": "node src/index.js",
     "test": "npm run quality:unit-tests",
-    "nonfunctional:documentation" : "mkdir -p doc && typedoc --out doc/ src/index.ts"
+    "trunk:commit": "npm run quality && git commit"
   },
   "keywords": [
     "monitoring",
