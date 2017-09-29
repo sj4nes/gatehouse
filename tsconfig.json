@@ -5,10 +5,11 @@
     },
     "files": [
         "public/js/viz-table-authevents.tsx",
-        "src/index.ts"
+        "src/index.ts",
+        "spec/jasmine/jasmine.spec.ts"
     ],
     "include": [
-        "**/*[sS]pec.ts",
+        "spec/**/*[sS]pec.ts",
         "helpers/**/*.ts"
     ]
 }
