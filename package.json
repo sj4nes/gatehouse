@@ -13,7 +13,8 @@
     "quality:lint": "tslint --project tsconfig.json",
     "quality:unit-tests": "npm run build:typescript && jasmine",
     "start": "node src/index.js",
-    "test": "npm run quality:unit-tests"
+    "test": "npm run quality:unit-tests",
+    "nonfunctional:documentation" : "mkdir -p doc && typedoc --out doc/ src/index.ts"
   },
   "keywords": [
     "monitoring",
