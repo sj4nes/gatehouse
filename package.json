@@ -9,6 +9,7 @@
   "scripts": {
     "build": "npm run quality:lint && npm run build:typescript",
     "build:typescript": "node_modules/typescript/bin/tsc",
+    "nonfunctional": "npm run nonfunctional:documentation",
     "nonfunctional:documentation": "mkdir -p doc && node_modules/typedoc/bin/typedoc --out doc/ src/index.ts",
     "quality": "npm run quality:lint && npm run quality:unit-tests",
     "quality:lint": "node_modules/tslint/bin/tslint --project tsconfig.json",

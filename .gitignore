@@ -1,7 +1,7 @@
 node_modules/*
 .vagrant/* 
 db/*
-src/index.js
+src/*.js
 public/js/viz-*.jsx
 public/js/viz-*.js
 npm-debug.log

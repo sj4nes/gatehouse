@@ -10,6 +10,8 @@ import * as _ from "lodash";
 import * as mongodb from "mongodb";
 import * as morgan from "morgan";
 import * as path from "path";
+import * as testdata from "./testdata";
+import { AuthResult, HttpMethod } from "./types";
 // tslint:disable-next-line:no-var-requires
 const flash = require("connect-flash");
 
@@ -33,9 +35,6 @@ gatehouse.use(session({
 gatehouse.use(flash());
 gatehouse.use(csurf());
 
-type HttpMethod = "get" | "put" | "post" | "delete" | "*";
-type AuthResult = "auth-pass" | "auth-fail" | "auth-unknown" | "auth-error" | "auth-end";
-
 interface IGatehouseUser {
     username: string;
     passhash: string;
@@ -50,60 +49,13 @@ interface IAuthEvent {
     result: AuthResult;
 }
 
-function randrange(start: number, end: number): number {
-    // This is really not intended to be precise.
-    return Math.floor(Math.random() * (end - start)) + start;
-}
-function randomTimeStamp(): string {
-    const year = randrange(1971, 2017);
-    const month = randrange(1, 12);
-    const day = randrange(1, 28); // Goodness, we don't believe in anything other than February.
-    const hour = randrange(1, 23);
-    const minute = randrange(1, 59);
-    const sec = randrange(1, 59);
-    return new Date(year, month, day, hour, minute, sec).toUTCString();
-}
-function randomIP(): string {
-    // These are of course utter-nonsense.
-    const a = Math.floor(Math.random() * (255 - 1) + 1);
-    const b = Math.floor(Math.random() * (255 - 1) + 1);
-    const c = Math.floor(Math.random() * (255 - 1) + 1);
-    const d = Math.floor(Math.random() * (255 - 1) + 1);
-    return ":ffff:" + [a, b, c, d].join(".");
-}
-
-function randomUsername(): string {
-    return Math.floor((Math.random() * 1e8)).toString(35);
-}
-
-function randomUserAgent(): string {
-    return "Internet Exploder 5.5";
-}
-
-function randomResult(): AuthResult {
-    const observation = Math.random();
-    if (observation < 0.005) {
-        return "auth-error";
-    }
-    if (observation < 0.015) {
-        return "auth-unknown";
-    }
-    if (observation < 0.02) {
-        return "auth-fail";
-    }
-    if (observation < 0.40) {
-        return "auth-end";
-    }
-    return "auth-pass";
-}
-
 function generateIAuthEvent(): IAuthEvent {
     const ae: IAuthEvent = {
-        ipAddress: randomIP(),
-        result: randomResult(),
-        timestamp: randomTimeStamp(),
-        userAgent: randomUserAgent(),
-        username: randomUsername(),
+        ipAddress: testdata.randomIP(),
+        result: testdata.randomResult(),
+        timestamp: testdata.randomTimeStamp(),
+        userAgent: testdata.randomUserAgent(),
+        username: testdata.randomUsername(),
     };
     return ae;
 }
