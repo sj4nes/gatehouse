@@ -52,7 +52,8 @@
     "pug": "^2.0.0-rc.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "tslint": "^5.7.0"
+    "tslint": "^5.7.0",
+    "typedoc": "^0.8.0"
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
