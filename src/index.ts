@@ -10,8 +10,9 @@ import * as _ from "lodash";
 import * as mongodb from "mongodb";
 import * as morgan from "morgan";
 import * as path from "path";
+import { AuthResult } from "./authlog";
+import { HttpMethod } from "./rest";
 import * as testdata from "./testdata";
-import { AuthResult, HttpMethod } from "./types";
 // tslint:disable-next-line:no-var-requires
 const flash = require("connect-flash");
 

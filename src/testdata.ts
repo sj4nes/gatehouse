@@ -1,4 +1,4 @@
-import { AuthResult } from "./types";
+import { AuthResult } from "./authlog";
 
 export function randrange(start: number, end: number): number {
     // This is really not intended to be precise.
