@@ -91,6 +91,10 @@ function recordIAuthEvent(ae: IAuthEvent) {
     recorder.insertOne(ae);
 }
 
+/**
+ * A standard interface for Express.js middleware. This is complicated by the fact that Express.js
+ * has different argument forms for different handlers all accepted by `.use()`.
+ */
 interface IExRoute {
     method: HttpMethod;
     path: string;
@@ -401,14 +405,14 @@ function verifyUser(ip: string, userAgent: string, username: string, password: s
             cb(null, true);
             return;
         }
-        const ae: IAuthEvent = {
+        const authFailed: IAuthEvent = {
             ipAddress: ip,
             result: "auth-fail",
             timestamp: getTimestamp(),
             userAgent,
             username,
         };
-        recordIAuthEvent(ae);
+        recordIAuthEvent(authFailed);
         cb(null, false);
     }
 }
