@@ -46,9 +46,9 @@ class TableHeaderField extends React.Component<{ name: string }> {
 interface IAuthEvent {
     _id: string;
     timestamp: string;
-    ip_address: string;
+    ipAddress: string;
     username: string;
-    user_agent: string;
+    userAgent: string;
     result: string;
 }
 
