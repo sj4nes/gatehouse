@@ -26,7 +26,9 @@ html
                 .mui-col-sm-2.mui--color-black
                     if username 
                         span Logged in as 
-                         = username
+                           b
+                              = username
+                        | &nbsp;
                         button.mui-btn.mui--bg-color-grey-400(onclick="document.location='/acct/logout'") Logout
                     else
                         span Not logged in.
