@@ -121,7 +121,7 @@ const gatehouseRoutes: IExRoute[] = [
 ];
 
 function getTestGenerateDataR(request, response) {
-    const num = 50;
+    const num = 500;
     for (let i = 0; i < num; i++) {
         recordIAuthEvent(generateIAuthEvent());
     }
