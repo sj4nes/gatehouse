@@ -47,12 +47,46 @@ import * as testdata from "./testdata";
 // tslint:disable-next-line:no-var-requires
 const flash = require("connect-flash");
 
+// Interfaces
+interface IAuthEvent {
+    timestamp: string;
+    ipAddress: string;
+    username: string;
+    userAgent: string;
+    result: AuthResult;
+}
+
+/**
+ * A standard interface for Express.js middleware. This is complicated by the fact that Express.js
+ * has different argument forms for different handlers all accepted by `.use()`.
+ */
+interface IExRoute {
+    method: HttpMethod;
+    path: string;
+    handler: (request, response) => void;
+}
+
 // Configuration
 const gatehousePort = 3000;
 const mongoDatabase = "mongodb://localhost:27017/gatehouse";
 
-log(`Initializing Gatehouse on :${gatehousePort}`);
+log(`Gatehouse Initializing`);
+log(`Connecting to MongoDB : ${mongoDatabase}`);
 
+// Database Connection
+let MDB = null;
+mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
+function mclientHandler(err, db) {
+    if (err !== null) {
+        log_error(`Mongo connection error: ${err}`);
+        // This is not production, will not reconnect in future.
+        process.exit(1);
+    }
+    log(`Connected to ${mongoDatabase}`);
+    MDB = db;
+}
+
+// Application Server
 const gatehouse = express();
 gatehouse.set("view engine", "pug");
 gatehouse.set("views", "./views");
@@ -66,14 +100,6 @@ gatehouse.use(session({
 }));
 gatehouse.use(flash());
 gatehouse.use(csurf());
-
-interface IAuthEvent {
-    timestamp: string;
-    ipAddress: string;
-    username: string;
-    userAgent: string;
-    result: AuthResult;
-}
 
 function generateIAuthEvent(): IAuthEvent {
     const ae: IAuthEvent = {
@@ -89,16 +115,6 @@ function generateIAuthEvent(): IAuthEvent {
 function recordIAuthEvent(ae: IAuthEvent) {
     const recorder = MDB.collection("auth_events");
     recorder.insertOne(ae);
-}
-
-/**
- * A standard interface for Express.js middleware. This is complicated by the fact that Express.js
- * has different argument forms for different handlers all accepted by `.use()`.
- */
-interface IExRoute {
-    method: HttpMethod;
-    path: string;
-    handler: (request, response) => void;
 }
 
 // FIXME Need to add authorization middleware to routing to
@@ -304,7 +320,7 @@ function log_error(str: string): void {
 }
 
 function log(str: string): void {
-    const ts = new Date().toString();
+    const ts = new Date().getTime() / 1000;
     process.stderr.write([ts, str].join(":") + "\n");
 }
 
@@ -320,17 +336,6 @@ function registerRoute(r: IExRoute) {
             log_error("Unknown method type: " + r.method);
             process.exit(1);
     }
-}
-let MDB = null;
-mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
-function mclientHandler(err, db) {
-    if (err !== null) {
-        log_error(`Mongo connection error: ${err}`);
-        // This is not production, will not reconnect in future.
-        process.exit(1);
-    }
-    log(`Connected to ${mongoDatabase}`);
-    MDB = db;
 }
 _.each(gatehouseRoutes, registerRoute);
 
@@ -418,4 +423,5 @@ function verifyUser(ip: string, userAgent: string, username: string, password: s
 }
 
 gatehouse.use(express.static("public"));
+log(`Gatehouse binding to ${gatehousePort}`);
 http.createServer(gatehouse).listen(gatehousePort);
