@@ -7,6 +7,7 @@ class AuthEventFields extends React.Component {
     }
     public render() {
         return (<tr>
+            <th>ID</th>
             <th>Timestamp</th>
             <th>IP Address</th>
             <th>Username</th>
@@ -57,10 +58,11 @@ class AuthEventRecord extends React.Component<{ ae: IAuthEvent }> {
     }
     public render() {
         return (<tr>
+            <td>{this.props.ae._id}</td>
             <td>{this.props.ae.timestamp}</td>
-            <td>{this.props.ae.ip_address}</td>
+            <td>{this.props.ae.ipAddress}</td>
             <td>{this.props.ae.username}</td>
-            <td>{this.props.ae.user_agent}</td>
+            <td>{this.props.ae.userAgent}</td>
             <td>{this.props.ae.result}</td>
         </tr>);
     }
