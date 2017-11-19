@@ -8,3 +8,4 @@ npm-debug.log
 spec/*/*.spec.js
 # All documentation is currently generated from the source code.
 doc/*
+nohup.out
