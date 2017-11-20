@@ -102,7 +102,7 @@ gatehouse.use(cookieParser());
 gatehouse.use(session({
     resave: true,
     saveUninitialized: true,
-    secret: "fidelio-alskfwenr2234oin234o32in4o23i4o3r",
+    secret: "fidelio-alskfwenr2234oin234o32in4o23i4o3r", // FIXME Pull this from a secret-bits repository.
 }));
 gatehouse.use(flash());
 gatehouse.use(csurf());
