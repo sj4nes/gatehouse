@@ -2,11 +2,14 @@
  * # Gatehouse
  *
  * ## Introduction
+ *
  * If the metaphor of the castle perimeter can be stretched, the "gatehouse" is the place where those
  * who control and man those gates congregate when they're not throwing boiling oil down upon the red
  * teams below. This is the area where those watching the gates determine the activity around the gates
  * or any other system inside and outside of the permimeter.
+ *
  * ### Inspirations
+ *
  * Gatehouse takes ideas liberally from many other systems and chooses components may be well suited
  * for the task--but perhaps not always considered.  The first of the three ideas are the following systems:
  *  * Elasticsearch [Data and Indexing]
@@ -16,11 +19,14 @@
  * Virtually none of these features are yet to be composed together in any fashion because I'm
  * building the tooling for the MERN/TS environment.  MERN/TS defined here is: MongoDB, Express.js,
  * React+Redux.js, Node.js in TypeScript.
+ *
  * ## Documentation Lives in the Source Code
+ *
  * All of the documentation of the system for developers should exist primarily in the commentary
  * in the source code. TypeDoc will be used to extract it into a suite of web pages that can be browsed.
  *
  * ## DevOps Pipelines
+ *
  * Personally I'm one of those minimalists who see if a tool already exists it should be used from the
  * environment. Since Node.js brings with it `npm` and `package.json` provides a well-defined area for
  * scripts the development pipelines or automation-tasks should be found there first. Top-level scripts
