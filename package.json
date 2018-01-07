@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "deploy:development": "npm install",
     "build": "npm run quality:lint && npm run build:typescript",
     "build:typescript": "node_modules/typescript/bin/tsc",
     "nonfunctional": "npm run nonfunctional:documentation",
