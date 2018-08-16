@@ -1,24 +1,12 @@
 {
   "name": "gatehouse",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Authentication Monitor",
   "main": "src/index.js",
   "directories": {
     "doc": "docs"
   },
-  "scripts": {
-    "deploy:development": "npm install",
-    "build": "npm run quality:lint && npm run build:typescript",
-    "build:typescript": "node_modules/typescript/bin/tsc",
-    "nonfunctional": "npm run nonfunctional:documentation",
-    "nonfunctional:documentation": "mkdir -p doc && node_modules/typedoc/bin/typedoc --out doc/ src/index.ts",
-    "quality": "npm run quality:lint && npm run quality:unit-tests",
-    "quality:lint": "node_modules/tslint/bin/tslint --project tsconfig.json",
-    "quality:unit-tests": "npm run build:typescript && jasmine",
-    "start": "node src/index.js",
-    "test": "npm run quality:unit-tests",
-    "trunk:commit": "npm run quality && git commit"
-  },
+  "scripts": {},
   "keywords": [
     "monitoring",
     "management",
@@ -26,41 +14,6 @@
   ],
   "author": "Simon Janes",
   "license": "BSD-2-Clause",
-  "dependencies": {
-    "@types/bcryptjs": "^2.4.1",
-    "@types/body-parser": "^1.16.5",
-    "@types/connect-flash": "0.0.33",
-    "@types/cookie-parser": "^1.4.1",
-    "@types/csurf": "^1.9.34",
-    "@types/express": "^4.0.37",
-    "@types/express-session": "^1.15.3",
-    "@types/jasmine": "^2.6.0",
-    "@types/lodash": "^4.14.74",
-    "@types/mongodb": "^2.2.11",
-    "@types/morgan": "^1.7.33",
-    "@types/node": "^8.0.29",
-    "@types/react": "*",
-    "@types/react-dom": "*",
-    "@types/serve-static": "^1.7.32",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.18.2",
-    "connect-flash": "^0.1.1",
-    "cookie-parser": "^1.4.3",
-    "csurf": "^1.9.0",
-    "express": "^4.15.4",
-    "express-session": "^1.15.5",
-    "lodash": "^4.17.4",
-    "mongodb": "^2.2.31",
-    "morgan": "^1.8.2",
-    "muicss": "^0.9.25",
-    "pug": "^2.0.0-rc.4",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
-    "tslint": "^5.7.0",
-    "typedoc": "^0.8.0"
-  },
-  "devDependencies": {
-    "jasmine": "^2.8.0",
-    "typescript": "^2.5.2"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }
