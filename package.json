@@ -14,8 +14,11 @@
   ],
   "author": "Simon Janes",
   "license": "BSD-2-Clause",
-  "dependencies": {},
+  "dependencies": {
+    "express": "^4.16.3"
+  },
   "devDependencies": {
-    "jest": "^23.5.0"
+    "jest": "^23.5.0",
+    "typescript": "^3.0.1"
   }
 }
