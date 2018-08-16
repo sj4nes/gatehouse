@@ -14,12 +14,12 @@ Vagrant.configure("2") do |config|
   # boxes at https://atlas.hashicorp.com/search.
   # config.vm.box = "generic/debian9" 
   
-  config.vm.box = "fedora/25-cloud-base"
-  config.vm.box_version = "20161122"
+  config.vm.box = "fedora/28-cloud-base"
+  config.vm.box_version = "20180425"
 
   config.vm.provider :libvirt do |libvirt|
-    libvirt.memory = "4096"
-    libvirt.cpus = 3
+    libvirt.memory = "2048"
+    libvirt.cpus = 2
   end
   config.vm.synced_folder './', '/vagrant', type: 'rsync'
   # Disable automatic box update checking. If you disable this, then
