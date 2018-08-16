@@ -15,5 +15,7 @@
   "author": "Simon Janes",
   "license": "BSD-2-Clause",
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^23.5.0"
+  }
 }
