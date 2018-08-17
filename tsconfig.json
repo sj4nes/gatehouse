@@ -5,6 +5,7 @@
     },
     "files": [
         "__tests__/nulltest/donothing.spec.ts",
+        "__tests__/fitness/expressjs.spec.ts",
         "public/js/viz-table-authevents.tsx",
         "src/index.ts"
     ],

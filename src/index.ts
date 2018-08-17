@@ -35,7 +35,7 @@
  * This documentation was built from the script "nonfunctional:documentation".
  */
 
- /** Imports for server */
+/** Imports for server */
 import * as bcryptjs from "bcryptjs";
 import * as bodyParser from "body-parser";
 import * as cookieParser from "cookie-parser";
@@ -83,6 +83,7 @@ log(`Connecting to MongoDB : ${mongoDatabase}`);
 let MDB = null;
 mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
 function mclientHandler(err, db) {
+    log(`p1 = ${err}`);
     if (err !== null) {
         log_error(`Mongo connection error: ${err}`);
         // This is not production, will not reconnect in future.
