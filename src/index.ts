@@ -75,14 +75,17 @@ interface IExRoute {
 // Configuration
 const gatehousePort = 3000;
 const mongoDatabase = "mongodb://localhost:27017/gatehouse";
-
+const mongoOptions = {
+    appname: "gatehouse index.ts",
+};
 log(`Gatehouse Initializing`);
 log(`Connecting to MongoDB : ${mongoDatabase}`);
 
 // Database Connection
-let MDB = null;
-mongodb.MongoClient.connect(mongoDatabase, mclientHandler);
-function mclientHandler(err, db) {
+const MDBConnector = new mongodb.MongoClient(mongoDatabase, mongoOptions);
+let MDB;
+MDBConnector.connect(mclientHandler);
+function mclientHandler(err: mongodb.MongoError, db: mongodb.MongoClient) {
     log(`p1 = ${err}`);
     if (err !== null) {
         log_error(`Mongo connection error: ${err}`);

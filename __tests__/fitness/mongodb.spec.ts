@@ -11,4 +11,9 @@ test(`Do we have a working test database instance?`, () => {
     };
     const theMongoClient = new mongodb.MongoClient(mongoDatabase, mongoOptions);
     expect(theMongoClient).toBeDefined();
+    const connectionHandler = (err, client) => {
+        expect(err).toBeFalsy();
+        expect(client).toBeDefined();
+    };
+    theMongoClient.connect(connectionHandler);
 });
