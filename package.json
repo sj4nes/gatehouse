@@ -14,7 +14,7 @@
     "nonfunctional:documentation": "mkdir -p doc && node_modules/typedoc/bin/typedoc --out doc/ src/index.ts",
     "quality": "npm run quality:lint && npm run quality:unit-tests",
     "quality:lint": "node_modules/tslint/bin/tslint --project tsconfig.json",
-    "quality:unit-tests": "npm run build:typescript && jest",
+    "quality:unit-tests": "npm run build:typescript && node_modules/.bin/jest",
     "start": "node src/index.js",
     "test": "npm run quality:unit-tests",
     "trunk:commit": "npm run quality && git commit"
@@ -29,6 +29,7 @@
   "dependencies": {
     "bcrypt": "^3.0.0",
     "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "csurf": "^1.9.0",
     "express": "^4.16.3",
@@ -43,11 +44,14 @@
     "redux": "^4.0.0"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "@types/mongodb": "^3.1.4",
     "@types/node": "^10.7.1",
     "@types/react": "^16.4.11",
     "@types/react-dom": "^16.0.7",
     "@types/redux": "^3.6.0",
     "jest": "^23.5.0",
+    "nodemon": "^1.18.3",
     "tachyons": "^4.11.1",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"

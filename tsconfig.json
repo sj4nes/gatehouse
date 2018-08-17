@@ -4,11 +4,12 @@
         "module": "commonjs"
     },
     "files": [
+        "__tests__/nulltest/donothing.spec.ts",
         "public/js/viz-table-authevents.tsx",
         "src/index.ts"
     ],
     "include": [
-        "spec/**/*[sS]pec.ts",
+        "__tests__/**/*[sS]pec.ts",
         "helpers/**/*.ts"
     ]
 }
