@@ -47,3 +47,14 @@ test(`How about doing some kind of database work?`, (done) => {
         done();
     });
 });
+
+test(`How about doing some kind of collection work?`, (done) => {
+    connectDatabase(() => {
+        const db = theMongoClient.db("test_mongodb");
+        expect(db).toBeDefined();
+        const xyz = db.collection("xyz");
+        expect(xyz).toBeDefined();
+        disconnectDatabase();
+        done();
+    });
+});
