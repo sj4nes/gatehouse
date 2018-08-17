@@ -83,9 +83,10 @@ log(`Connecting to MongoDB : ${mongoDatabase}`);
 
 // Database Connection
 const MDBConnector = new mongodb.MongoClient(mongoDatabase, mongoOptions);
-let MDB;
+let mongoClient;
+let mongoDB;
 MDBConnector.connect(mclientHandler);
-function mclientHandler(err: mongodb.MongoError, db: mongodb.MongoClient) {
+function mclientHandler(err: mongodb.MongoError, client: mongodb.MongoClient) {
     log(`p1 = ${err}`);
     if (err !== null) {
         log_error(`Mongo connection error: ${err}`);
@@ -93,7 +94,8 @@ function mclientHandler(err: mongodb.MongoError, db: mongodb.MongoClient) {
         process.exit(1);
     }
     log(`Connected to ${mongoDatabase}`);
-    MDB = db;
+    mongoClient = client;
+    mongoDB = client.db("gatehouse");
 }
 
 // Application Server
@@ -123,7 +125,7 @@ function generateIAuthEvent(): IAuthEvent {
 }
 
 function recordIAuthEvent(ae: IAuthEvent) {
-    const recorder = MDB.collection("auth_events");
+    const recorder = mongoDB.collection("auth_events");
     recorder.insertOne(ae);
 }
 
@@ -156,19 +158,19 @@ function getTestGenerateDataR(request, response) {
 }
 
 function getTestEraseDbR(request, response) {
-    MDB.dropDatabase();
+    mongoDB.dropDatabase();
     request.flash("info", `Dropped the database.`);
     response.redirect("/");
 }
 
 function getTestEraseAuthEventsR(request, response) {
-    MDB.dropCollection("auth_events");
+    mongoDB.dropCollection("auth_events");
     request.flash("info", `Dropped the authEvents.`);
     response.redirect("/acct/dashboard");
 }
 
 function getTestEraseUsersR(request, response) {
-    MDB.dropCollection("users");
+    mongoDB.dropCollection("users");
     request.flash("info", `Dropped the users.`);
     response.redirect("/");
 }
@@ -203,7 +205,7 @@ function getRegisterR(request, response): void {
 }
 
 function getFindRecordsR(request, response): void {
-    const authEvents = MDB.collection("auth_events");
+    const authEvents = mongoDB.collection("auth_events");
     authEvents.find().toArray(processRecords);
     function processRecords(err, recs) {
         if (err) {
@@ -351,9 +353,9 @@ _.each(gatehouseRoutes, registerRoute);
 
 process.on("SIGINT", () => {
     log_error("SIGINT: Caught.");
-    if (MDB !== null) {
+    if (mongoDB !== null) {
         log_error("Closing database connection.");
-        MDB.close();
+        mongoDB.close();
     }
     process.exit();
 });
@@ -361,7 +363,7 @@ process.on("SIGINT", () => {
 function registerUser(username: string, password: string, cb?: (err: string, created: boolean) => void) {
     const salt = bcryptjs.genSaltSync();
     const hashed = bcryptjs.hashSync(password, salt);
-    const users = MDB.collection("users");
+    const users = mongoDB.collection("users");
     cb = cb ? cb : (): void => { return; };
     users.insertOne({
         passhash: hashed,
@@ -371,7 +373,7 @@ function registerUser(username: string, password: string, cb?: (err: string, cre
 }
 
 function getUser(username: string, cb: (err, user) => void) {
-    const users = MDB.collection("users");
+    const users = mongoDB.collection("users");
     users.findOne({ username }, cb);
 }
 

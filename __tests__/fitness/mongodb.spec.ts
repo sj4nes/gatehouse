@@ -10,7 +10,7 @@ test(`Do we have a working test database instance?`, (done) => {
     done();
 });
 
-let theMongoClient;
+let theMongoClient: mongodb.MongoClient;
 
 const connectDatabase = (cont?) => {
     const mongoDatabase = "mongodb://localhost:27017/gatehouse";
@@ -56,5 +56,20 @@ test(`How about doing some kind of collection work?`, (done) => {
         expect(xyz).toBeDefined();
         disconnectDatabase();
         done();
+    });
+});
+
+test(`How about doing some kind of collection work?`, (done) => {
+    connectDatabase(() => {
+        const db = theMongoClient.db("gatehouse");
+        expect(db).toBeDefined();
+        const usersCollection = db.collection("users");
+        expect(usersCollection).toBeDefined();
+        usersCollection.find({ user: "joeblow" }).toArray((err, joes) => {
+            expect(err).toBe(null);
+            expect(joes).toEqual([]);
+            disconnectDatabase();
+            done();
+        });
     });
 });
