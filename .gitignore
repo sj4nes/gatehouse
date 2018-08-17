@@ -5,7 +5,7 @@ src/*.js
 public/js/viz-*.jsx
 public/js/viz-*.js
 npm-debug.log
-spec/*/*.spec.js
+__tests__/*/*.spec.js
 # All documentation is currently generated from the source code.
 doc/*
 nohup.out
