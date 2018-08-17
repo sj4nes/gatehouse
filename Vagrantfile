@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
   config.vm.box_version = "20180425"
 
   config.vm.provider :libvirt do |libvirt|
-    libvirt.memory = "2048"
+    libvirt.memory = "1024"
     libvirt.cpus = 2
   end
   config.vm.synced_folder './', '/vagrant', type: 'rsync'
