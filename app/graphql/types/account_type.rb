@@ -1,3 +1,5 @@
 class Types::AccountType < Types::BaseObject
-    field :email, String, null: false
+    description "A object representing the account"
+    field :id, ID, null: false
+    field :email, String, "The e-mail address used to authenticate", null: false
 end
