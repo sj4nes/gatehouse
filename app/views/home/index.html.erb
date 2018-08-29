@@ -1,2 +1,10 @@
-<h1>Home#index</h1>
-<p>Find me in app/views/home/index.html.erb</p>
+<h1>Welcome to Gatehouse</h1>
+
+<p style="font-size: 2rem;" >This is a placeholder for something much more fun. 
+
+<% if not account_signed_in? %>
+<a class="btn" href="/accounts/sign_in">Sign In</a>
+<a class="btn" href="/accounts/sign_up">Register</a>
+<% else %> 
+<%= link_to "Log out", destroy_account_session_path, :method => :delete, :class => "btn" %>
+<% end %>
