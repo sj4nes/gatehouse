@@ -3,7 +3,10 @@
 one:
   username: MyString
   passhash: MyString
+  email: nobody@example.com
 
 two:
   username: MyString
   passhash: MyString
+  email: another-nobody@example.com
+
