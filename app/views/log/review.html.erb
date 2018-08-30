@@ -1,12 +1,11 @@
-<h1>Welcome to Gatehouse</h1>
-
-<p style="font-size: 2rem;" >This is a placeholder for something much more fun. 
+<h1>Recent Events</h1>
 
 <% if not account_signed_in? %>
 <a class="btn" href="/accounts/sign_in">Sign In</a>
 <a class="btn" href="/accounts/sign_up">Register</a>
 <% else %> 
+<div id="logView"></div>
+
 <%= link_to "Log out", destroy_account_session_path, :method => :delete, :class => "btn" %><br/>
-<%= link_to "GraphIQL", graphiql_rails_path, :class => "btn" %><br/>
-<%= link_to "Log Review", log_review_path, :class => "btn" %><br/>
+
 <% end %>
