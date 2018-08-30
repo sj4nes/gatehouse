@@ -18,5 +18,13 @@ module Types
     def authevent(id:) 
       AuthEvent.find(id)
     end
+
+    field :authevents, [AuthEventType], null: true do
+      description "Find events"
+      argument :limit, Integer, required: false
+    end
+    def authevents(limit=30) 
+      AuthEvent.last(limit)
+    end
   end
 end
