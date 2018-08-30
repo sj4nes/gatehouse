@@ -10,5 +10,13 @@ module Types
     def account(id:)
       Account.find(id)
     end
+
+    field :authevent, AuthEventType, null: true do
+      description "Find events by ID"
+      argument :id, ID, required: true
+    end
+    def authevent(id:) 
+      AuthEvent.find(id)
+    end
   end
 end
