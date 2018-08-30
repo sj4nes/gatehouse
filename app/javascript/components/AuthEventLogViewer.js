@@ -69,7 +69,7 @@ class AuthEventLogViewer extends React.Component {
           <table style={{ backgroundColor: 'white', opacity: 0.99, color: 'black' }}>
             <thead>
               <tr>
-                <th>Account</th>
+                <th>Event#</th>
                 <th>IP Address</th>
                 <th>Timestamp</th>
               </tr>
@@ -90,7 +90,7 @@ class AuthEventLogViewer extends React.Component {
             </tbody>
             <tfoot>
               <tr>
-                <th>Account</th>
+                <th>Event#</th>
                 <th>IP Address</th>
                 <th>Timestamp</th>
               </tr>
