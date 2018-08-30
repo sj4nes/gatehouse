@@ -30,6 +30,15 @@ const GET_AUTHEVENT1 = gql`
 }
 `;
 
+const GET_AUTHEVENTS = gql`
+{
+  authevents {
+    id
+    createdAt
+    ipaddress
+  }
+}
+`;
 // client
 //   .query({
 //     query: gql`
@@ -57,7 +66,7 @@ class AuthEventLogViewer extends React.Component {
     return (
       <ApolloProvider client={client}>
         <React.Fragment>
-          <table>
+          <table style={{ backgroundColor: 'white', opacity: 0.99, color: 'black' }}>
             <thead>
               <tr>
                 <th>Account</th>
@@ -66,7 +75,7 @@ class AuthEventLogViewer extends React.Component {
               </tr>
             </thead>
             <tbody>
-              <Query query={GET_AUTHEVENT1}>
+              <Query query={GET_AUTHEVENTS}>
                 {({ loading, error, data }) => {
                   if (error) {
                     return <tr><td>Error</td></tr>;
@@ -74,7 +83,7 @@ class AuthEventLogViewer extends React.Component {
                   if (loading || !data) {
                     return <tr><td>Fetching...</td></tr>;
                   }
-                  return <AuthEventView event={data.authevent} />
+                  return data.authevents.map((authevent) => <AuthEventView key={authevent.id} event={authevent} />);
                   //return data.authevents.map(AuthEventView); // 
                 }}
               </Query>
