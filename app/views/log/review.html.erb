@@ -4,8 +4,8 @@
 <a class="btn" href="/accounts/sign_in">Sign In</a>
 <a class="btn" href="/accounts/sign_up">Register</a>
 <% else %> 
-<div id="logView"></div>
-
-<%= link_to "Log out", destroy_account_session_path, :method => :delete, :class => "btn" %><br/>
+<%= react_component("AuthEventLogViewer") %>
+<br/><br/><br/>
+<%= link_to "Log out", destroy_account_session_path, :method => :delete, :class => "btn clear" %><br/>
 
 <% end %>
